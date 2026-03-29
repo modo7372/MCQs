@@ -3391,7 +3391,9 @@ function App() {
       .then(text=>{
           const fk = fileKeyFrom(fileName);
           setFileKey(fk);
-          const {parsed,lessons}=parseTextData(text, fk);
+          const jsonData = JSON.parse(text);
+          const {parsed, lessons} = parseParsedData(jsonData, fk);
+
           setQuestions(parsed); setAvailableLessons(lessons); setIsLoading(false);
           // Load this file's per-file data from storage
           setFavIds(new Set(load('favs',[],fk)));
