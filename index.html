@@ -1,6 +1,6 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QnA Hub — Study Intelligence</title>
@@ -240,8 +240,8 @@ mark{background:var(--pg);color:var(--primary);border-radius:3px;padding:0 2px;f
 const { useState, useEffect, useRef, useMemo, useCallback, memo } = React;
 
 // ═══════════════════════════════ CONFIG ═══════════════════════════════
- const AVAILABLE_FILES = [
-  "GIT-Enhanced-Study-Guide-v2.0.json"
+const AVAILABLE_FILES = [
+  "GIT-Enhanced.json"
 ];
 const SK = "qna4_"; // storage key prefix
 
@@ -316,7 +316,55 @@ const THEMES = [
 ];
 
 // ═══════════════════════════════ PARSER ═══════════════════════════════
+// Parse text data - tries to parse as JSON, falls back to parseParsedData
+function parseTextData(text, fileKey) {
+  try {
+    const jsonData = JSON.parse(text);
+    return parseParsedData(jsonData, fileKey);
+  } catch (error) {
+    console.error('Failed to parse text as JSON:', error);
+    return { parsed: [], lessons: [] };
+  }
+}
+
+// Calculate tag statistics from all questions
+function getTagStats(questions) {
+  const stats = {};
+  questions.forEach(q => {
+    if (q.tags && Array.isArray(q.tags)) {
+      q.tags.forEach(tag => {
+        stats[tag] = (stats[tag] || 0) + 1;
+      });
+    }
+  });
+  return stats;
+}
+
+// Get tag suggestions for collection queries
+function getTagSuggestions(questions, searchTerm = '', sortByCount = true) {
+  const tagStats = getTagStats(questions);
+  const filtered = Object.entries(tagStats)
+    .filter(([tag]) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => sortByCount ? b[1] - a[1] : a[0].localeCompare(b[0]));
+  return filtered;
+}
+
+// Get lesson suggestions for collection queries
+function getLessonSuggestions(questions, searchTerm = '', sortByCount = true) {
+  const lessonStats = {};
+  questions.forEach(q => {
+    if (q.lesson) {
+      lessonStats[q.lesson] = (lessonStats[q.lesson] || 0) + 1;
+    }
+  });
+  const filtered = Object.entries(lessonStats)
+    .filter(([lesson]) => lesson.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => sortByCount ? b[1] - a[1] : a[0].localeCompare(b[0]));
+  return filtered;
+}
+
 // Parse pre-parsed JSON file format (expects: { questions: [...], metadata?: {...} })
+// Handles both single "tag" field and "tags" array field
 function parseParsedData(data, fileKey) {
   const fk = fileKey || 'file';
   let questions = [];
@@ -324,18 +372,40 @@ function parseParsedData(data, fileKey) {
 
   // Handle JSON object with questions array
   if (data && typeof data === 'object' && data.questions && Array.isArray(data.questions)) {
-    questions = data.questions.map((q, idx) => ({
-      id: `${fk}__${idx + 1}`,
-      numId: idx,
-      fileKey: fk,
-      lesson: q.lesson || 'General',
-      question: q.question || '',
-      options: Array.isArray(q.options) ? q.options : [],
-      answerKey: q.answerKey || '',
-      answerText: q.answerText || '',
-      explanation: q.explanation || '',
-      tag: q.tag || ''
-    }));
+    questions = data.questions.map((q, idx) => {
+      // Handle both "tag" (string) and "tags" (array) formats
+      let allTags = [];
+      
+      // Collect from "tags" array if it exists - keep as-is
+      if (Array.isArray(q.tags) && q.tags.length > 0) {
+        allTags = [...q.tags];
+      }
+      
+      // Collect from "tag" string if it exists and not already in tags
+      if (q.tag && typeof q.tag === 'string' && q.tag.trim()) {
+        const singleTag = q.tag.trim();
+        if (!allTags.includes(singleTag)) {
+          allTags.push(singleTag);
+        }
+      }
+      
+      // Join all tags with " | " separator for display
+      const tagString = allTags.length > 0 ? allTags.join(' | ') : '';
+      
+      return {
+        id: `${fk}__${idx + 1}`,
+        numId: idx,
+        fileKey: fk,
+        lesson: q.lesson || 'General',
+        question: q.question || '',
+        options: Array.isArray(q.options) ? q.options : [],
+        answerKey: q.answerKey || '',
+        answerText: q.answerText || '',
+        explanation: q.explanation || '',
+        tag: tagString, // Combined tags as string
+        tags: allTags   // Keep original tags array for filtering
+      };
+    });
     questions.forEach(q => lessons.add(q.lesson));
   }
 
@@ -549,10 +619,21 @@ function resolveAtom(q, questions) {
     const term = fieldM[2].trim().toLowerCase();
     questions.forEach(qq => {
       let hay = '';
+      let isExactMatch = false;
       if (field==='q'||field==='question') hay = qq.question||'';
       else if (field==='ans'||field==='answer') hay = [qq.answerKey,qq.answerText].filter(Boolean).join(' ');
       else if (field==='exp'||field==='explanation') hay = qq.explanation||'';
-      else if (field==='tag') hay = [qq.tag].filter(Boolean).join(' ');
+      else if (field==='tag') {
+        // For tags, check exact match or partial match
+        if (qq.tags && Array.isArray(qq.tags)) {
+          isExactMatch = qq.tags.some(t => t.toLowerCase() === term);
+          if (isExactMatch) {
+            matched.add(qq.id);
+            return;
+          }
+          hay = qq.tags.map(t => t.toLowerCase()).join(' ');
+        }
+      }
       else if (field==='lesson') hay = qq.lesson||'';
       else if (field==='option'||field==='options') hay = (qq.options||[]).join(' ');
       if (hay.toLowerCase().includes(term)) matched.add(qq.id);
@@ -777,7 +858,7 @@ function QueryEntryRow({ entry, questions, onRerun, onDelete, onEdit, onLoadToIn
   );
 }
 
-function CollectionsModal({ questions, collections, setName, systemSets, onSave, onClose, pinnedIds, favIds, completedIds, wrongIds, srData, weakIds }) {
+function CollectionsModal({ questions, collections, setName, systemSets, onSave, onClose, pinnedIds, favIds, completedIds, wrongIds, srData, weakIds, exportCollectionAsShareable, setShareableCollectionText, setShowCollectionShare }) {
   const [colls, setColls] = useState(() => {
     const c = JSON.parse(JSON.stringify(collections));
     return c.map(col => ({ ...col, queries: col.queries || [] }));
@@ -789,6 +870,8 @@ function CollectionsModal({ questions, collections, setName, systemSets, onSave,
   // Per-collection query input state
   const [queryInputs, setQueryInputs] = useState({}); // {collId: string}
   const [queryPreviews, setQueryPreviews] = useState({}); // {collId: Set<id>}
+  const [suggestions, setSuggestions] = useState({}); // {collId: [{tag/lesson, count}, ...]}
+  const [showSuggestions, setShowSuggestions] = useState({}); // {collId: bool}
 
   // Auto-save whenever colls or set name changes
   const isFirstRender = useRef(true);
@@ -812,11 +895,45 @@ function CollectionsModal({ questions, collections, setName, systemSets, onSave,
     }));
   };
 
-  // Live query preview
+  // Live query preview with suggestions
   const handleQueryInput = (collId, val) => {
     setQueryInputs(prev => ({ ...prev, [collId]: val }));
     const matched = resolveQuery(val, questions);
     setQueryPreviews(prev => ({ ...prev, [collId]: matched }));
+    
+    // Show suggestions if typing tag: or lesson: prefix
+    const tagMatch = val.match(/tag:(\S*)$/i);
+    const lessonMatch = val.match(/lesson:(\S*)$/i);
+    
+    if (tagMatch) {
+      const searchTerm = tagMatch[1];
+      const sug = getTagSuggestions(questions, searchTerm, true).slice(0, 12);
+      setSuggestions(prev => ({ ...prev, [collId]: sug }));
+      setShowSuggestions(prev => ({ ...prev, [collId]: true }));
+    } else if (lessonMatch) {
+      const searchTerm = lessonMatch[1];
+      const sug = getLessonSuggestions(questions, searchTerm, true).slice(0, 12);
+      setSuggestions(prev => ({ ...prev, [collId]: sug }));
+      setShowSuggestions(prev => ({ ...prev, [collId]: true }));
+    } else {
+      setShowSuggestions(prev => ({ ...prev, [collId]: false }));
+    }
+  };
+
+  // Insert a suggestion into the query input
+  const insertSuggestion = (collId, suggestion) => {
+    const current = queryInputs[collId] || '';
+    const tagMatch = current.match(/tag:(\S*)$/i);
+    const lessonMatch = current.match(/lesson:(\S*)$/i);
+    let newVal = current;
+    
+    if (tagMatch) {
+      newVal = current.slice(0, tagMatch.index) + `tag:${suggestion}`;
+    } else if (lessonMatch) {
+      newVal = current.slice(0, lessonMatch.index) + `lesson:${suggestion}`;
+    }
+    
+    handleQueryInput(collId, newVal);
   };
 
   // Save a query entry to the collection's history
@@ -924,6 +1041,15 @@ function CollectionsModal({ questions, collections, setName, systemSets, onSave,
               title="Set name — click to rename"/>
           </div>
           <div style={{ display:'flex', gap:8 }}>
+            {activeCol && (
+              <button className="btn" onClick={() => {
+                const prompt = exportCollectionAsShareable(activeCol);
+                setShareableCollectionText(prompt);
+                setShowCollectionShare(true);
+              }} style={{background:'var(--purple)',borderColor:'var(--purple)',color:'#fff'}} title="Share this collection as a prompt">
+                📤 Share
+              </button>
+            )}
             <button className="btn primary" onClick={() => onSave(colls, editedSetName)}>Save All</button>
             <button className="btn ghost" onClick={onClose}><I.X s={15}/></button>
           </div>
@@ -1018,6 +1144,43 @@ function CollectionsModal({ questions, collections, setName, systemSets, onSave,
                     onKeyDown={e => e.key==='Enter' && qInput.trim() && applyQuery(active)}
                     style={{ marginBottom:8 }}
                   />
+                  
+                  {/* Tag/Lesson suggestions dropdown */}
+                  {showSuggestions[active] && suggestions[active] && suggestions[active].length > 0 && (
+                    <div style={{ background:'var(--card)', border:'1px solid var(--border2)', borderRadius:6, padding:8, marginBottom:8 }}>
+                      <div style={{ fontSize:10, fontWeight:700, color:'var(--muted)', marginBottom:6, textTransform:'uppercase', letterSpacing:'.08em' }}>
+                        💡 Suggestions ({suggestions[active].length})
+                      </div>
+                      <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+                        {suggestions[active].map(([item, count]) => (
+                          <button
+                            key={item}
+                            onClick={() => insertSuggestion(active, item)}
+                            style={{
+                              fontSize:11,
+                              padding:'4px 10px',
+                              background:'var(--border2)',
+                              color:'var(--muted)',
+                              border:'1px solid var(--border)',
+                              borderRadius:4,
+                              cursor:'pointer',
+                              display:'flex',
+                              alignItems:'center',
+                              gap:4,
+                              transition:'all 0.2s',
+                              whiteSpace:'nowrap'
+                            }}
+                            onMouseOver={e => {e.target.style.background = 'var(--primary)'; e.target.style.color = 'white';}}
+                            onMouseOut={e => {e.target.style.background = 'var(--border2)'; e.target.style.color = 'var(--muted)';}}
+                          >
+                            {item}
+                            <span style={{ fontSize:9, opacity:0.7 }}>({count})</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
                   <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:8 }}>
                     {[['1-50','ID range'],['fever IN 1-50','keyword in range'],['q:fever','question field'],
                       ['tag:malaria','tag'],['lesson:inf','lesson'],['ans:B','answer key'],
@@ -1687,17 +1850,178 @@ function NoteModal({ qId, question, noteText, onSave, onClose }) {
 }
 
 // ═══════════════════════════════ TAG EDITOR MODAL ═══════════════════════════════
-function TagEditModal({ qId, question, currentTag, onSave, onClose }) {
-  const [tag, setTag] = useState(currentTag||'');
+function TagEditModal({ qId, question, currentTag, onSave, onClose, allQuestions, copiedTags, showToast }) {
+  const [newTags, setNewTags] = useState(''); // ✓ CHANGED: Only for NEW tags, not editing
+  const [inputValue, setInputValue] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [sortByCount, setSortByCount] = useState(true);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [addedTags, setAddedTags] = useState([]);
+
+  // Current tags (display only - cannot edit)
+  const currentTags = typeof currentTag === 'string' && currentTag.trim() 
+    ? currentTag.split('|').map(t => t.trim()).filter(t => t)
+    : [];
+
+  // Get all tags from questions with their counts
+  const tagStats = {};
+  allQuestions?.forEach(q => {
+    if (q.tags && Array.isArray(q.tags)) {
+      q.tags.forEach(tag => {
+        if (!currentTags.includes(tag) && !addedTags.includes(tag)) { // Don't suggest already added tags
+          tagStats[tag] = (tagStats[tag] || 0) + 1;
+        }
+      });
+    }
+  });
+
+  // Filter and sort suggestions
+  const suggestions = Object.entries(tagStats)
+    .filter(([tag]) => !addedTags.includes(tag) && tag.toLowerCase().includes(searchValue.toLowerCase()))
+    .sort((a, b) => sortByCount ? b[1] - a[1] : a[0].localeCompare(b[0]))
+    .slice(0, 15);
+
+  const addTag = (tag = inputValue.trim()) => {
+    if (tag && !addedTags.includes(tag) && !currentTags.includes(tag)) {
+      setAddedTags([...addedTags, tag]);
+      setInputValue('');
+      setSearchValue('');
+    }
+  };
+
+  const removeNewTag = (idx) => {
+    setAddedTags(addedTags.filter((_, i) => i !== idx));
+  };
+
+  const save = () => {
+    if (addedTags.length > 0) {
+      const allTags = [...currentTags, ...addedTags];
+      onSave(qId, allTags.join(' | '));
+      showToast?.(`✓ Added ${addedTags.length} tag${addedTags.length !== 1 ? 's' : ''}`);
+    }
+    onClose();
+  };
+
   return (
     <div className="modal-bg" onClick={onClose}>
-      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:420}}>
-        <div style={{fontWeight:700,marginBottom:8,fontSize:14}}>🏷 Edit Tag — Q{qId}</div>
+      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:600}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div style={{fontWeight:700,fontSize:14}}>🏷 Add Tags — Q{qId}</div>
+          <button className="btn ghost" onClick={onClose} style={{padding:'4px 8px'}}>✕</button>
+        </div>
         <div style={{color:'var(--muted)',fontSize:12,marginBottom:12}}>{question.slice(0,80)}{question.length>80?'…':''}</div>
-        <input className="input" value={tag} onChange={e=>setTag(e.target.value)} placeholder="Tag name..." autoFocus onKeyDown={e=>e.key==='Enter'&&(onSave(qId,tag),onClose())}/>
-        <div style={{display:'flex',gap:8,marginTop:10,justifyContent:'flex-end'}}>
-          <button className="btn" onClick={()=>{onSave(qId,'');onClose();}}>Clear</button>
-          <button className="btn primary" onClick={()=>{onSave(qId,tag);onClose();}}>Save</button>
+        
+        {/* Current tags - READ ONLY DISPLAY */}
+        {currentTags.length > 0 && (
+          <div style={{marginBottom:14, padding:'12px', background:'var(--card2)', borderRadius:'var(--rs)', border:'1px solid var(--border)'}}>
+            <div style={{color:'var(--muted)',fontSize:10,marginBottom:8,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.5px'}}>📌 Existing Tags (Read-only)</div>
+            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+              {currentTags.map((tag, idx) => (
+                <span key={idx} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 12px',background:'var(--primary)',color:'white',borderRadius:'var(--rs)',fontSize:12,fontWeight:500}}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* New tags being added */}
+        {addedTags.length > 0 && (
+          <div style={{marginBottom:14, padding:'12px', background:'var(--gg)', borderRadius:'var(--rs)', border:'1px solid var(--green)'}}>
+            <div style={{color:'var(--green)',fontSize:10,marginBottom:8,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.5px'}}>✓ New Tags To Add ({addedTags.length})</div>
+            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+              {addedTags.map((tag, idx) => (
+                <span key={idx} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 12px',background:'var(--green)',color:'white',borderRadius:'var(--rs)',fontSize:12,fontWeight:500}}>
+                  {tag}
+                  <button onClick={() => removeNewTag(idx)} style={{background:'none',border:'none',color:'white',cursor:'pointer',fontSize:14,padding:0,lineHeight:1}}>×</button>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Input section */}
+        <div style={{display:'flex',gap:4,marginBottom:12}}>
+          <input 
+            className="input" 
+            value={inputValue} 
+            onChange={e=>{setInputValue(e.target.value);setShowSuggestions(true);}} 
+            placeholder="Type new tag to add..." 
+            onKeyDown={e=>{
+              if(e.key==='Enter') { e.preventDefault(); addTag(); }
+              if(e.key===' ') { e.preventDefault(); addTag(); }
+            }}
+            style={{flex:1}}
+            autoFocus
+          />
+          <button className="btn primary" onClick={() => addTag()} style={{padding:'6px 12px'}}>+ Add</button>
+        </div>
+
+        {/* Suggestions section */}
+        {(showSuggestions || searchValue) && (
+          <div style={{marginBottom:12,padding:12,background:'var(--card2)',borderRadius:'var(--rs)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+              <div style={{fontSize:11,fontWeight:700,color:'var(--muted)',textTransform:'uppercase'}}>Suggestions ({suggestions.length})</div>
+              <div style={{display:'flex',gap:4}}>
+                <button 
+                  onClick={() => setSortByCount(!sortByCount)} 
+                  style={{fontSize:10,padding:'2px 6px',background:sortByCount?'var(--primary)':'var(--border2)',color:sortByCount?'white':'var(--muted)',border:'none',borderRadius:3,cursor:'pointer'}}
+                >
+                  {sortByCount ? '🔢 Count' : '📝 A-Z'}
+                </button>
+              </div>
+            </div>
+            
+            <input 
+              className="input" 
+              value={searchValue} 
+              onChange={e => setSearchValue(e.target.value)} 
+              placeholder="Search available tags..." 
+              style={{marginBottom:8,fontSize:12}}
+            />
+
+            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+              {suggestions.length === 0 ? (
+                <span style={{fontSize:12,color:'var(--muted)',fontStyle:'italic'}}>No matching tags</span>
+              ) : (
+                suggestions.map(([tag, count]) => (
+                  <button
+                    key={tag}
+                    onClick={() => { addTag(tag); setSearchValue(''); }}
+                    style={{
+                      fontSize:11,
+                      padding:'4px 8px',
+                      background:'var(--border2)',
+                      color:'var(--muted)',
+                      border:'1px solid var(--border)',
+                      borderRadius:4,
+                      cursor:'pointer',
+                      display:'flex',
+                      alignItems:'center',
+                      gap:4,
+                      transition:'all 0.2s'
+                    }}
+                    onMouseOver={e => {e.target.style.background = 'var(--primary)'; e.target.style.color = 'white';}}
+                    onMouseOut={e => {e.target.style.background = 'var(--border2)'; e.target.style.color = 'var(--muted)';}}
+                  >
+                    {tag}
+                    <span style={{fontSize:10,opacity:0.7}}>({count})</span>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        <div style={{display:'flex',gap:8,marginTop:16,justifyContent:'flex-end'}}>
+          <button className="btn" onClick={onClose}>Cancel</button>
+          <button className="btn primary" onClick={save} disabled={addedTags.length === 0}>
+            {addedTags.length === 0 ? '(No new tags)' : `✓ Add ${addedTags.length} Tag${addedTags.length !== 1 ? 's' : ''}`}
+          </button>
+        </div>
+
+        <div style={{marginTop:12, padding:'8px 12px', background:'var(--card2)', borderRadius:'var(--rs)', fontSize:11, color:'var(--muted)', borderLeft:'3px solid var(--yellow)'}}>
+          ℹ️ <strong>Add Only:</strong> You can add new tags to this question, but cannot modify existing tags. To remove tags, use the question editor directly.
         </div>
       </div>
     </div>
@@ -1737,14 +2061,421 @@ function StreakHeatmap({ sessions }) {
   );
 }
 
-// ═══════════════════════════════ QUESTION CARD ═══════════════════════════════
+// ═══════════════════════════════ ANALYTICS MODAL ═══════════════════════════════
+function AnalyticsModal({ analytics, sessionTime, streak, onClose }) {
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:500,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>📊 Study Analytics</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+        
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:24}}>
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',textAlign:'center'}}>
+            <div style={{fontSize:28,fontWeight:700,color:'var(--primary)'}}>{analytics.done}/{analytics.total}</div>
+            <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Questions Done</div>
+          </div>
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',textAlign:'center'}}>
+            <div style={{fontSize:28,fontWeight:700,color:'var(--green)'}}>{analytics.accuracy}%</div>
+            <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Accuracy</div>
+          </div>
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',textAlign:'center'}}>
+            <div style={{fontSize:28,fontWeight:700,color:'var(--yellow)'}}>{analytics.weakCount}</div>
+            <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Weak Areas</div>
+          </div>
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',textAlign:'center'}}>
+            <div style={{fontSize:28,fontWeight:700,color:'var(--purple)'}}>{sessionTime}</div>
+            <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Session Time</div>
+          </div>
+        </div>
+
+        <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',marginBottom:20}}>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+            <span style={{fontSize:13,fontWeight:500}}>Progress</span>
+            <span style={{fontSize:13,color:'var(--muted)'}}>{Math.round((analytics.done/analytics.total)*100)}%</span>
+          </div>
+          <div style={{width:'100%',height:6,background:'var(--border2)',borderRadius:3,overflow:'hidden'}}>
+            <div style={{height:'100%',background:'var(--primary)',width:`${(analytics.done/analytics.total)*100}%`,transition:'width 0.3s'}}/>
+          </div>
+        </div>
+
+        {streak > 0 && (
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',marginBottom:20,textAlign:'center'}}>
+            <div style={{fontSize:24}}>🔥 {streak} Day Streak!</div>
+            <div style={{fontSize:12,color:'var(--muted)',marginTop:8}}>Keep it up!</div>
+          </div>
+        )}
+
+        <button onClick={onClose} className="btn primary" style={{width:'100%'}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ DAILY GOAL MODAL ═══════════════════════════════
+function DailyGoalModal({ currentGoal, onSetGoal, onClose }) {
+  const [goal, setGoal] = useState(currentGoal);
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:400,width:'90%',boxShadow:'var(--shadowl)'}}>
+        <h2 style={{margin:'0 0 20px 0',fontSize:18,fontWeight:700}}>🎯 Daily Study Goal</h2>
+        <div style={{marginBottom:20}}>
+          <label style={{display:'block',marginBottom:8,fontSize:13,fontWeight:500}}>Questions per day</label>
+          <input type="number" min="1" max="100" value={goal} onChange={e=>setGoal(Math.max(1,parseInt(e.target.value)||1))} 
+            style={{width:'100%',padding:'8px 12px',borderRadius:'var(--rs)',border:'1px solid var(--border2)',background:'var(--card2)',color:'var(--text)',fontSize:14}}/>
+        </div>
+        <div style={{display:'flex',gap:10}}>
+          <button onClick={()=>{onSetGoal(goal);onClose();}} className="btn primary" style={{flex:1}}>Set Goal</button>
+          <button onClick={onClose} className="btn" style={{flex:1}}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ STUDY PLAN MODAL ═══════════════════════════════
+function StudyPlanModal({ recommendations, onStartStudy, onClose }) {
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:600,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>📋 Smart Study Plan</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+        <div style={{maxHeight:'70vh',overflow:'auto'}}>
+          {recommendations.length === 0 ? (
+            <div style={{textAlign:'center',padding:20,color:'var(--muted)'}}>
+              🎉 You're all caught up! No recommendations right now.
+            </div>
+          ) : (
+            recommendations.map((rec, idx) => (
+              <div key={idx} style={{background:'var(--card2)',padding:12,marginBottom:10,borderRadius:'var(--rs)',borderLeft:`3px solid ${rec.type==='weak'?'var(--red)':rec.type==='review'?'var(--yellow)':'var(--primary)'}`,cursor:'pointer'}}
+                onClick={()=>{onStartStudy(rec.q);onClose();}}>
+                <div style={{fontSize:13,fontWeight:500,marginBottom:4}}>{rec.q.question.substring(0,60)}...</div>
+                <div style={{fontSize:11,color:'var(--muted)'}}>
+                  {rec.type === 'weak' && '⚠️ Weak Area'}
+                  {rec.type === 'review' && '🔄 Due for Review'}
+                  {rec.type === 'new' && '✨ New Question'}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        <button onClick={onClose} className="btn" style={{width:'100%',marginTop:16}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ POMODORO TIMER MODAL ═══════════════════════════════
+function PomodoroTimerModal({ timeLeft, isActive, onToggle, onTimeChange, onClose }) {
+  const [customMinutes, setCustomMinutes] = useState(25);
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:40,maxWidth:400,width:'90%',textAlign:'center',boxShadow:'var(--shadowl)'}}>
+        <h2 style={{margin:'0 0 30px 0',fontSize:24,fontWeight:700}}>🍅 Pomodoro Timer</h2>
+        <div style={{fontSize:72,fontWeight:700,color:'var(--primary)',marginBottom:30,fontFamily:'var(--mono)',letterSpacing:8}}>
+          {String(Math.floor(timeLeft / 60)).padStart(2,'0')}:{String(timeLeft % 60).padStart(2,'0')}
+        </div>
+        <div style={{display:'flex',gap:10,marginBottom:30}}>
+          <button onClick={onToggle} className={`btn ${isActive?'danger':'primary'}`} style={{flex:1,fontSize:16,padding:'12px 20px'}}>
+            {isActive ? '⏸ Pause' : '▶ Start'}
+          </button>
+          <button onClick={()=>{onTimeChange(customMinutes);}} className="btn" style={{flex:1}}>Reset</button>
+        </div>
+        <div style={{marginBottom:20}}>
+          <label style={{display:'block',marginBottom:8,fontSize:12,fontWeight:500}}>Custom Duration (minutes)</label>
+          <input type="number" min="1" max="60" value={customMinutes} onChange={e=>setCustomMinutes(Math.max(1,parseInt(e.target.value)||25))}
+            style={{width:'100%',padding:'8px',borderRadius:'var(--rs)',border:'1px solid var(--border2)',background:'var(--card2)',color:'var(--text)',fontSize:14}}/>
+        </div>
+        <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)',marginBottom:20,fontSize:12,color:'var(--muted)'}}>
+          💡 <strong>Tip:</strong> Use the Pomodoro Technique: 25 min focus + 5 min break for optimal productivity
+        </div>
+        <button onClick={onClose} className="btn" style={{width:'100%'}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ INSIGHTS MODAL ═══════════════════════════════
+function InsightsModal({ insights, performance, velocity, estimatedCompletion, onClose }) {
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:500,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>💡 Study Insights</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+
+        <div style={{marginBottom:20}}>
+          <h3 style={{margin:'0 0 12px 0',fontSize:14,fontWeight:600}}>Performance Insights</h3>
+          {insights.length === 0 ? (
+            <p style={{color:'var(--muted)',margin:0}}>Start studying to see insights!</p>
+          ) : (
+            insights.map((insight, idx) => (
+              <div key={idx} style={{background:'var(--card2)',padding:10,marginBottom:8,borderRadius:'var(--rs)',fontSize:13}}>
+                {insight}
+              </div>
+            ))
+          )}
+        </div>
+
+        <div style={{marginBottom:20,display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <div style={{background:'var(--card2)',padding:12,borderRadius:'var(--rs)',textAlign:'center'}}>
+            <div style={{fontSize:20,fontWeight:700,color:'var(--green)'}}>{velocity}</div>
+            <div style={{fontSize:11,color:'var(--muted)',marginTop:4}}>Q/min</div>
+          </div>
+          {estimatedCompletion && (
+            <div style={{background:'var(--card2)',padding:12,borderRadius:'var(--rs)',textAlign:'center'}}>
+              <div style={{fontSize:14,fontWeight:700}}>📅</div>
+              <div style={{fontSize:11,color:'var(--muted)',marginTop:4}}>
+                {estimatedCompletion.toLocaleDateString()}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div style={{background:'var(--card2)',padding:12,borderRadius:'var(--rs)',marginBottom:20}}>
+          <div style={{fontSize:12,fontWeight:600,marginBottom:8}}>📈 Key Metrics</div>
+          <div style={{fontSize:11,color:'var(--muted)',lineHeight:1.8}}>
+            <div>Accuracy: {performance.accuracy}%</div>
+            <div>Progress: {performance.done}/{performance.total}</div>
+            <div>Weak Areas: {performance.weakCount}</div>
+          </div>
+        </div>
+
+        <button onClick={onClose} className="btn primary" style={{width:'100%'}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ TOPIC MASTERY MODAL ═══════════════════════════════
+function TopicMasteryModal({ lessons, masteryData, onClose }) {
+  const getMasteryColor = (level) => {
+    switch(level) {
+      case 'expert': return 'var(--green)';
+      case 'advanced': return 'var(--primary)';
+      case 'intermediate': return 'var(--yellow)';
+      default: return 'var(--red)';
+    }
+  };
+  
+  const getMasteryEmoji = (level) => {
+    switch(level) {
+      case 'expert': return '🏆';
+      case 'advanced': return '⭐';
+      case 'intermediate': return '📈';
+      default: return '🌱';
+    }
+  };
+
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:600,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>🏆 Topic Mastery</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+
+        <div style={{maxHeight:'70vh',overflow:'auto'}}>
+          {lessons.map((lesson, idx) => {
+            const data = masteryData[lesson];
+            const done = data?.done || 0;
+            const total = data?.total || 0;
+            const mastery = data?.mastery || 'beginner';
+            const percentage = total > 0 ? (done / total) * 100 : 0;
+            
+            return (
+              <div key={idx} style={{background:'var(--card2)',padding:12,marginBottom:10,borderRadius:'var(--rs)'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+                  <div style={{fontSize:12,fontWeight:600}}>{lesson.substring(0,40)}</div>
+                  <span style={{fontSize:16}}>{getMasteryEmoji(mastery)}</span>
+                </div>
+                <div style={{height:4,background:'var(--border2)',borderRadius:2,overflow:'hidden',marginBottom:6}}>
+                  <div style={{height:'100%',background:getMasteryColor(mastery),width:`${percentage}%`,transition:'width 0.3s'}}/>
+                </div>
+                <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--muted)'}}>
+                  <span>{done}/{total} questions</span>
+                  <span style={{color:getMasteryColor(mastery),fontWeight:600,textTransform:'uppercase'}}>{mastery}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <button onClick={onClose} className="btn" style={{width:'100%',marginTop:16}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ SESSION HISTORY MODAL ═══════════════════════════════
+function SessionHistoryModal({ logs, onClose }) {
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:600,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>📚 Study Sessions</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+
+        {logs.length === 0 ? (
+          <div style={{textAlign:'center',padding:20,color:'var(--muted)'}}>Start studying to track sessions!</div>
+        ) : (
+          <div style={{maxHeight:'65vh',overflow:'auto'}}>
+            {logs.map((log, idx) => {
+              const date = new Date(log.date);
+              return (
+                <div key={idx} style={{background:'var(--card2)',padding:12,marginBottom:10,borderRadius:'var(--rs)',borderLeft:'3px solid var(--primary)'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+                    <span style={{fontWeight:600}}>{date.toLocaleDateString()}</span>
+                    <span style={{color:'var(--muted)',fontSize:11}}>{Math.round(log.duration / 60)}m</span>
+                  </div>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,fontSize:11}}>
+                    <div>📝 {log.questionsStudied} questions</div>
+                    <div>🎯 {log.accuracy}% accuracy</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <button onClick={onClose} className="btn" style={{width:'100%',marginTop:16}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ LEARNING PATH MODAL ═══════════════════════════════
+function LearningPathModal({ path, currentIndex, onSelectTopic, onGenerate, onClose }) {
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:500,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>🛤️ Learning Path</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+
+        {path.length === 0 ? (
+          <div style={{textAlign:'center',padding:20}}>
+            <p style={{color:'var(--muted)',marginBottom:16}}>Generate an optimized learning path</p>
+            <button onClick={onGenerate} className="btn primary" style={{width:'100%'}}>Generate Path</button>
+          </div>
+        ) : (
+          <div style={{maxHeight:'65vh',overflow:'auto'}}>
+            {path.map((topic, idx) => (
+              <div key={idx} style={{background:idx === currentIndex ? 'var(--pg)' : 'var(--card2)',padding:12,marginBottom:8,borderRadius:'var(--rs)',cursor:'pointer',border:idx === currentIndex ? '2px solid var(--primary)' : 'none'}}
+                onClick={() => onSelectTopic(idx)}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:18}}>{idx + 1}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:600,fontSize:12}}>{topic.substring(0,50)}</div>
+                    <div style={{fontSize:10,color:'var(--muted)',marginTop:2}}>
+                      {idx === currentIndex ? '📍 Current' : idx < currentIndex ? '✅ Completed' : '⏳ Upcoming'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <button onClick={onClose} className="btn" style={{width:'100%',marginTop:16}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ BOOKMARKS MODAL ═══════════════════════════════
+function BookmarksModal({ questions, bookmarkedIds, onRemoveBookmark, onClose }) {
+  const bookmarked = questions.filter(q => bookmarkedIds.has(q.id));
+  
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:24,maxWidth:600,width:'90%',maxHeight:'90vh',overflow:'auto',boxShadow:'var(--shadowl)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{margin:0,fontSize:18,fontWeight:700}}>⭐ Bookmarked Questions ({bookmarked.length})</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:20,color:'var(--muted)'}}>×</button>
+        </div>
+
+        {bookmarked.length === 0 ? (
+          <div style={{textAlign:'center',padding:20,color:'var(--muted)'}}>No bookmarks yet. Click ⭐ to bookmark questions!</div>
+        ) : (
+          <div style={{maxHeight:'65vh',overflow:'auto'}}>
+            {bookmarked.map((q, idx) => (
+              <div key={idx} style={{background:'var(--card2)',padding:12,marginBottom:10,borderRadius:'var(--rs)'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'start',gap:8}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:500,marginBottom:4}}>{q.question.substring(0,80)}...</div>
+                    <div style={{fontSize:10,color:'var(--muted)'}}>📚 {q.lesson}</div>
+                  </div>
+                  <button onClick={() => onRemoveBookmark(q.id)} style={{background:'none',border:'none',cursor:'pointer',color:'var(--yellow)',fontSize:16}}>✕</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <button onClick={onClose} className="btn" style={{width:'100%',marginTop:16}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════ PERFORMANCE BENCHMARK MODAL ═══════════════════════════════
+function BenchmarkModal({ benchmark, onClose }) {
+  if (!benchmark) {
+    return (
+      <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+        <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:40,maxWidth:400,width:'90%',textAlign:'center',boxShadow:'var(--shadowl)'}}>
+          <h2 style={{margin:'0 0 20px 0',fontSize:18,fontWeight:700}}>📊 Performance Benchmark</h2>
+          <p style={{color:'var(--muted)',marginBottom:20}}>No benchmark data yet. Study more to generate benchmark comparisons!</p>
+          <button onClick={onClose} className="btn" style={{width:'100%'}}>Close</button>
+        </div>
+      </div>
+    );
+  }
+
+  const isPerfoming = benchmark.current >= benchmark.average;
+  
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
+      <div style={{background:'var(--card)',borderRadius:'var(--r)',padding:40,maxWidth:400,width:'90%',textAlign:'center',boxShadow:'var(--shadowl)'}}>
+        <h2 style={{margin:'0 0 30px 0',fontSize:18,fontWeight:700}}>📊 Your Performance</h2>
+        
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:30}}>
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)'}}>
+            <div style={{fontSize:28,fontWeight:700,color:'var(--primary)'}}>{benchmark.current}%</div>
+            <div style={{fontSize:11,color:'var(--muted)',marginTop:8}}>Your Accuracy</div>
+          </div>
+          <div style={{background:'var(--card2)',padding:16,borderRadius:'var(--rs)'}}>
+            <div style={{fontSize:28,fontWeight:700,color:'var(--yellow)'}}>{benchmark.average}%</div>
+            <div style={{fontSize:11,color:'var(--muted)',marginTop:8}}>Average</div>
+          </div>
+        </div>
+
+        <div style={{background:isPerfoming ? 'var(--gg)' : 'var(--rg)',padding:16,borderRadius:'var(--rs)',marginBottom:20,borderLeft:`3px solid ${isPerfoming ? 'var(--green)' : 'var(--red)'}`}}>
+          <div style={{fontSize:14,fontWeight:600,color:isPerfoming ? 'var(--green)' : 'var(--red)'}}>
+            {isPerfoming ? '✓ Above Average' : '📈 Keep Improving'}
+          </div>
+          <div style={{fontSize:11,color:'var(--muted)',marginTop:6}}>
+            {isPerfoming ? `You're performing ${benchmark.current - benchmark.average}% above average!` : `You're ${benchmark.average - benchmark.current}% below average. Keep studying!`}
+          </div>
+        </div>
+
+        <button onClick={onClose} className="btn" style={{width:'100%'}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
 const QuestionCard = memo(function QuestionCard({
   q, isCollapsed, isFav, isDone, isPinned, isWeak, srCard, isDue: due,
   displaySettings, searchQ, onToggleCollapse, onToggleFav, onToggleDone,
   onOpenNote, noteText, onOpenTag, customTag, compact, onTogglePin, collections,
   focused, onFocusClick, localAnsOverride, onToggleLocalAns,
   localOptOverride, onToggleLocalOpt, localExpOverride, onToggleLocalExp,
-  bulkMode, isBulkSelected, onToggleBulk, onJumpTag,
+  bulkMode, isBulkSelected, onToggleBulk, onJumpTag, setQDifficulty, questionDifficulty, showToast, onCopyTags,
 }) {
   const showAns  = localAnsOverride !== undefined ? localAnsOverride : displaySettings.showAnswer;
   const showOpts = localOptOverride  !== undefined ? localOptOverride : displaySettings.showOptions;
@@ -1826,6 +2557,16 @@ const QuestionCard = memo(function QuestionCard({
           <button onClick={()=>onOpenNote(q.id)} title="Note (N)" style={{background:noteText?'var(--pg)':'none',border:'none',cursor:'pointer',padding:'4px 6px',borderRadius:6,color:noteText?'var(--primary)':'var(--muted)'}}><I.Note/></button>
           <button onClick={()=>onToggleFav(q.id)} title="Favorite (F)" style={{background:'none',border:'none',cursor:'pointer',padding:'4px 6px',borderRadius:6}}><I.Star f={isFav}/></button>
           <button onClick={()=>onTogglePin(q.id)} title="Pin (P)" style={{background:isPinned?'var(--yg)':'none',border:isPinned?'1px solid var(--yellow)':'1px solid transparent',cursor:'pointer',padding:'3px 6px',borderRadius:6,color:isPinned?'var(--yellow)':'var(--muted)'}}><I.Pin/></button>
+          {/* Difficulty selector */}
+          <div style={{display:'flex',gap:2,padding:'0 2px'}}>
+            {['easy','medium','hard'].map(level=>(
+              <button key={level} onClick={(e)=>{e.stopPropagation();setQDifficulty(q.id,level);showToast(`Marked as ${level}`)}}
+                title={`Mark as ${level}`}
+                style={{fontSize:9,padding:'2px 4px',borderRadius:4,border:'1px solid',borderColor:questionDifficulty[q.id]===level?'var(--primary)':'var(--border2)',background:questionDifficulty[q.id]===level?'var(--pg)':'var(--card2)',color:questionDifficulty[q.id]===level?'var(--primary)':'var(--muted)',cursor:'pointer',fontWeight:500}}>
+                {level[0].toUpperCase()}
+              </button>
+            ))}
+          </div>
           <span className="id-badge">{q.id}</span>
           <div style={{color:'var(--muted)',padding:'2px 4px'}}>{isCollapsed?<I.Cd/>:<I.Cu/>}</div>
         </div>
@@ -1868,25 +2609,34 @@ const QuestionCard = memo(function QuestionCard({
 
           {/* Tags & meta row */}
           <div style={{display:'flex',flexWrap:'wrap',gap:6,alignItems:'center'}}>
-            {displaySettings.showTags&&(q.tag||customTag)&&(()=>{
-              const tagVal = customTag||q.tag;
+            {displaySettings.showTags && (q.tags && q.tags.length > 0 || customTag) && (()=>{
+              const tags = customTag ? [customTag] : (q.tags || []);
               return (
-                <span className="tag-chip" style={{cursor:'pointer',padding:0,overflow:'hidden'}}>
-                  <span
-                    onClick={e=>{e.stopPropagation();onJumpTag&&onJumpTag(tagVal);}}
-                    title={`Filter by tag: ${tagVal}`}
-                    style={{display:'inline-flex',alignItems:'center',gap:4,padding:'3px 6px 3px 9px',cursor:'pointer'}}>
-                    <I.Tag/>{tagVal}
-                  </span>
-                  <span
-                    onClick={e=>{e.stopPropagation();onOpenTag(q.id);}}
-                    title="Edit tag"
-                    style={{display:'inline-flex',alignItems:'center',padding:'3px 7px 3px 4px',borderLeft:'1px solid var(--border2)',color:'var(--muted)',fontSize:10,cursor:'pointer',opacity:.7}}
-                  >✎</span>
-                </span>
+                <>
+                  {tags.map((tag, idx) => (
+                    <span key={idx} className="tag-chip" style={{cursor:'pointer',padding:0,overflow:'hidden'}}>
+                      <span
+                        onClick={e=>{e.stopPropagation();onJumpTag&&onJumpTag(tag);}}
+                        title={`Filter by tag: ${tag}`}
+                        style={{display:'inline-flex',alignItems:'center',gap:4,padding:'3px 6px 3px 9px',cursor:'pointer'}}>
+                        <I.Tag/>{tag}
+                      </span>
+                      <span
+                        onClick={e=>{e.stopPropagation();onCopyTags?.(q.tags);showToast(`Copied ${q.tags?.length||0} tag${q.tags?.length!==1?'s':''}`)}}
+                        title="Copy tags"
+                        style={{display:'inline-flex',alignItems:'center',padding:'3px 5px 3px 4px',borderLeft:'1px solid var(--border2)',color:'var(--muted)',fontSize:10,cursor:'pointer',opacity:.7}}
+                      >📋</span>
+                      <span
+                        onClick={e=>{e.stopPropagation();onOpenTag(q.id);}}
+                        title="Edit tags"
+                        style={{display:'inline-flex',alignItems:'center',padding:'3px 7px 3px 4px',borderLeft:'1px solid var(--border2)',color:'var(--muted)',fontSize:10,cursor:'pointer',opacity:.7}}
+                      >✎</span>
+                    </span>
+                  ))}
+                </>
               );
             })()}
-            {!q.tag&&!customTag&&(
+            {!q.tags?.length && !customTag && (
               <button onClick={e=>{e.stopPropagation();onOpenTag(q.id);}} className="tag-chip" style={{cursor:'pointer',color:'var(--muted)',fontSize:10}}>+ tag</button>
             )}
             {/* SR info */}
@@ -1947,21 +2697,40 @@ function LessonFilterPanel({ availableLessons, selectedLessons, onToggle, onClea
   );
 }
 
-function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, questions, customTags, floatMode }) {
+function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, questions, customTags, floatMode, showToast }) {
   const [q, setQ] = useState('');
   const inputRef = useRef(null);
   useEffect(()=>{ setTimeout(()=>inputRef.current?.focus(), 50); }, []);
 
+  // ✓ FIX: Count ALL tags including tags array, not just single tag field
   const tagCounts = useMemo(()=>{
     const m = {};
-    questions.forEach(q=>{
-      const t = customTags[q.id]||q.tag;
-      if (t&&t.trim()) m[t.trim()]=(m[t.trim()]||0)+1;
+    questions.forEach(question=>{
+      // Collect all tags: from q.tags array + custom tags
+      const tagsSet = new Set();
+      if (question.tags && Array.isArray(question.tags)) {
+        question.tags.forEach(t => {
+          if (t && t.trim()) tagsSet.add(t.trim());
+        });
+      }
+      if (customTags[question.id]) {
+        customTags[question.id].split('|').forEach(t => {
+          if (t && t.trim()) tagsSet.add(t.trim());
+        });
+      }
+      if (question.tag && question.tag.trim()) {
+        tagsSet.add(question.tag.trim());
+      }
+      // Increment counts
+      tagsSet.forEach(tag => {
+        m[tag] = (m[tag] || 0) + 1;
+      });
     });
-    if (restTags&&restTags.length>0)
-      m['__REST__'] = restTags.reduce((acc,t)=>acc+(m[t]||0),0);
+    if (restTags && restTags.length > 0) {
+      m['__REST__'] = restTags.reduce((acc, t) => acc + (m[t] || 0), 0);
+    }
     return m;
-  },[questions,customTags,restTags]);
+  }, [questions, customTags, restTags]);
 
   const filtered = useMemo(()=>{
     if (!q.trim()) return allTags;
@@ -1969,12 +2738,19 @@ function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, qu
     return allTags.filter(t => t==='__REST__' ? 'rest'.includes(lo) : t.toLowerCase().includes(lo));
   },[allTags, q]);
 
+  const copyTagToClipboard = (tag, e) => {
+    e.stopPropagation();
+    const copyText = tag === '__REST__' ? `Rest (${restTags?.length || 0} misc)` : tag;
+    navigator.clipboard.writeText(copyText);
+    if (showToast) showToast(`✓ Copied: ${copyText}`);
+  };
+
   return (
     <div style={{
       position: floatMode ? 'fixed' : 'absolute',
       top: floatMode ? 112 : 'calc(100% + 6px)',
       left: floatMode ? 'unset' : 0,
-      width:300,
+      width:340,
       background:'var(--card)',border:'1px solid var(--border2)',borderRadius:'var(--r)',
       boxShadow:'var(--shadowl)',zIndex:200,animation:'fadeUp .15s ease-out',
       overflow:'hidden'
@@ -1987,10 +2763,25 @@ function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, qu
           style={{flex:1,background:'none',border:'none',outline:'none',fontSize:13,color:'var(--text)',fontFamily:'var(--font)'}}/>
         {q&&<button onClick={()=>setQ('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--muted)',padding:0,lineHeight:1}}><I.X s={12}/></button>}
       </div>
+
+      {/* Selected tags display - show obviously */}
+      {selectedTags.size > 0 && (
+        <div style={{padding:'10px 12px', background:'var(--pg)', borderBottom:'2px solid var(--primary)', display:'flex', flexWrap:'wrap', gap:6, alignItems:'center'}}>
+          <span style={{fontSize:10, fontWeight:700, color:'var(--primary)', textTransform:'uppercase', letterSpacing:'0.5px'}}>Selected:</span>
+          {Array.from(selectedTags).map(tag => (
+            <span key={tag} style={{background:'var(--primary)', color:'#fff', padding:'4px 10px', borderRadius:'var(--rs)', fontSize:12, fontWeight:600, display:'flex', alignItems:'center', gap:4}}>
+              {tag === '__REST__' ? `Rest (${restTags?.length || 0})` : tag}
+              <button onClick={e => { e.stopPropagation(); onToggle(tag); }} style={{background:'none', border:'none', color:'#fff', cursor:'pointer', fontSize:14, padding:0, lineHeight:1}}>×</button>
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Clear all */}
       {selectedTags.size>0&&(
-        <div className="dd-item" onClick={onClear} style={{color:'var(--red)',fontWeight:700,borderBottom:'1px solid var(--border)',fontSize:12}}>✕ Clear all ({selectedTags.size})</div>
+        <div className="dd-item" onClick={onClear} style={{color:'var(--red)',fontWeight:700,borderBottom:'1px solid var(--border)',fontSize:12,cursor:'pointer'}}>✕ Clear all ({selectedTags.size})</div>
       )}
+
       {/* Scrollable list */}
       <div style={{maxHeight:280,overflowY:'auto'}}>
         {filtered.length===0&&<div style={{padding:'10px 14px',fontSize:12,color:'var(--muted)'}}>No matches</div>}
@@ -2002,15 +2793,24 @@ function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, qu
           return (
             <div key={t} className="dd-item" onClick={()=>onToggle(t)}
               title={isRest ? `Tags >40 chars with 1 question:\n${(restTags||[]).slice(0,8).join('\n')}${restTags?.length>8?'\n…':''}` : t}
-              style={{background: active ? 'var(--pg)' : undefined}}>
-              <input type="checkbox" checked={active} onChange={()=>{}}
-                style={{accentColor:'var(--primary)',flexShrink:0}}/>
-              <span style={{flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',
-                color: active ? 'var(--primary)' : undefined,
-                fontStyle: isRest ? 'italic' : undefined}}>
-                {label}
-              </span>
-              <span style={{fontSize:10,color:'var(--muted)',fontFamily:'var(--mono)',flexShrink:0}}>{cnt}</span>
+              style={{background: active ? 'var(--pg)' : undefined, display:'flex', alignItems:'center', gap:8, justifyContent:'space-between', paddingRight:8}}>
+              <div style={{display:'flex', alignItems:'center', gap:8, flex:1, minWidth:0}}>
+                <input type="checkbox" checked={active} onChange={()=>{}}
+                  style={{accentColor:'var(--primary)',flexShrink:0}}/>
+                <span style={{flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',
+                  color: active ? 'var(--primary)' : undefined,
+                  fontStyle: isRest ? 'italic' : undefined}}>
+                  {label}
+                </span>
+                <span style={{fontSize:10,color:'var(--muted)',fontFamily:'var(--mono)',flexShrink:0}}>{cnt}</span>
+              </div>
+              {/* Copy individual tag button */}
+              <button onClick={(e) => copyTagToClipboard(t, e)} 
+                title="Copy this tag individually"
+                style={{background:'none', border:'none', color:'var(--muted)', cursor:'pointer', padding:'2px 4px', fontSize:12, lineHeight:1, transition:'color .2s'}}
+                onMouseEnter={e => e.target.style.color = 'var(--primary)'}
+                onMouseLeave={e => e.target.style.color = 'var(--muted)'}
+              >📋</button>
             </div>
           );
         })}
@@ -3201,6 +4001,9 @@ function App() {
   const [lessonDDOpen, setLessonDDOpen] = useState(false);
   const [tagDDOpen, setTagDDOpen] = useState(false);
   const [displaySettings, setDisplaySettings] = useState(()=>load('display',{showOptions:true,showAnswer:true,showExplanation:true,showTags:true}));
+  const [selectedMainLesson, setSelectedMainLesson] = useState(null); // No default lesson
+  const [showCollectionShare, setShowCollectionShare] = useState(false);
+  const [shareableCollectionText, setShareableCollectionText] = useState('');
   const [compact, setCompact] = useState(()=>load('compact',false));
   const [theme, setTheme] = useState(()=>load('theme','dark'));
 
@@ -3227,9 +4030,56 @@ function App() {
   const [showKnowledgeMap, setShowKnowledgeMap] = useState(false);
   const [noteModal, setNoteModal] = useState(null);
   const [tagModal, setTagModal] = useState(null);
+  const [copiedTags, setCopiedTags] = useState(null); // For quick copy tags from another Q
   const [localAnsOverrides, setLocalAnsOverrides] = useState({}); // {qId: true|false}
   const [localOptOverrides, setLocalOptOverrides] = useState({}); // {qId: true|false}
   const [localExpOverrides, setLocalExpOverrides] = useState({}); // {qId: true|false}
+
+  // NEW FEATURES
+  const [sessionDuration, setSessionDuration] = useState(0); // Session timer in seconds
+  const [dailyGoal, setDailyGoal] = useState(() => load('dailyGoal', 10)); // Questions per day
+  const [lastStudyDate, setLastStudyDate] = useState(() => load('lastStudyDate', null));
+  const [studyStreak, setStudyStreak] = useState(() => load('studyStreak', 0));
+  const [questionDifficulty, setQuestionDifficulty] = useState(() => load('qDifficulty', {})); // {qId: 'easy'|'medium'|'hard'}
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [focusMode, setFocusMode] = useState(false); // Distraction-free mode
+  const [showStudyPlan, setShowStudyPlan] = useState(false);
+  
+  // ADDITIONAL NEW FEATURES
+  const [pomodoroTime, setPomodoroTime] = useState(() => load('pomodoroTime', 25)); // minutes
+  const [showPomodoroTimer, setShowPomodoroTimer] = useState(false);
+  const [pomodoroActive, setPomodoroActive] = useState(false);
+  const [pomodoroSecondsLeft, setPomodoroSecondsLeft] = useState(25 * 60);
+  const [topicMastery, setTopicMastery] = useState(() => load('topicMastery', {})); // {lesson: 'beginner'|'intermediate'|'expert'}
+  const [showInsights, setShowInsights] = useState(false);
+  const [showTopicMastery, setShowTopicMastery] = useState(false);
+  const [studyHistory, setStudyHistory] = useState(() => load('studyHistory', [])); // [{date, count, duration}]
+  const [lessonStats, setLessonStats] = useState(() => load('lessonStats', {})); // {lesson: {done, total, correct}}
+  const [filterByDifficulty, setFilterByDifficulty] = useState(null); // 'easy'|'medium'|'hard'|null
+  const [showComparisonMode, setShowComparisonMode] = useState(false);
+  const [sessionStartTime, setSessionStartTime] = useState(Date.now());
+  const [estimatedCompletion, setEstimatedCompletion] = useState(null);
+
+  // PREMIUM FEATURES - BATCH 3
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [searchRegex, setSearchRegex] = useState(''); // Regex search
+  const [highlightedQuestions, setHighlightedQuestions] = useState(new Set()); // {qId}
+  const [sessionLogs, setSessionLogs] = useState(() => load('sessionLogs', [])); // [{date, duration, questionsStudied, accuracy}]
+  const [showSessionHistory, setShowSessionHistory] = useState(false);
+  const [learningPath, setLearningPath] = useState(() => load('learningPath', [])); // Ordered list of topics to study
+  const [currentPathIndex, setCurrentPathIndex] = useState(0);
+  const [showLearningPath, setShowLearningPath] = useState(false);
+  const [showStudyReminders, setShowStudyReminders] = useState(false);
+  const [reminderTime, setReminderTime] = useState(() => load('reminderTime', '09:00')); // HH:MM format
+  const [remindersEnabled, setRemindersEnabled] = useState(() => load('remindersEnabled', false));
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState(() => load('bookmarked', new Set())); // {qId}
+  const [showBookmarks, setShowBookmarks] = useState(false);
+  const [performanceBenchmark, setPerformanceBenchmark] = useState(() => load('benchmark', null)); // {average, percentile}
+  const [showBenchmark, setShowBenchmark] = useState(false);
+  const [questionComments, setQuestionComments] = useState(() => load('qComments', {})); // {qId: "comment"}
+  const [exportFormat, setExportFormat] = useState('csv'); // 'csv'|'json'|'anki'
+  const [showExportWizard, setShowExportWizard] = useState(false);
 
   // Session timer
   const sessionStartRef = useRef(Date.now());
@@ -3269,6 +4119,17 @@ function App() {
   useEffect(()=>save('compact',compact),[compact]);
   useEffect(()=>save('autoCollapseDone',autoCollapseDone),[autoCollapseDone]);
   useEffect(()=>save('theme',theme),[theme]);
+  useEffect(()=>save('qDifficulty',questionDifficulty),[questionDifficulty]);
+  useEffect(()=>save('focusMode',focusMode),[focusMode]);
+  useEffect(()=>save('pomodoroTime',pomodoroTime),[pomodoroTime]);
+  useEffect(()=>save('topicMastery',topicMastery),[topicMastery]);
+  useEffect(()=>save('filterByDifficulty',filterByDifficulty),[filterByDifficulty]);
+  useEffect(()=>save('bookmarked',bookmarkedQuestions),[bookmarkedQuestions]);
+  useEffect(()=>save('qComments',questionComments),[questionComments]);
+  useEffect(()=>save('reminderTime',reminderTime),[reminderTime]);
+  useEffect(()=>save('remindersEnabled',remindersEnabled),[remindersEnabled]);
+  useEffect(()=>save('sessionLogs',sessionLogs),[sessionLogs]);
+  useEffect(()=>save('benchmark',performanceBenchmark),[performanceBenchmark]);
 
   // ── Theme ──
   useEffect(()=>{
@@ -3391,9 +4252,7 @@ function App() {
       .then(text=>{
           const fk = fileKeyFrom(fileName);
           setFileKey(fk);
-          const jsonData = JSON.parse(text);
-          const {parsed, lessons} = parseParsedData(jsonData, fk);
-
+          const {parsed,lessons}=parseTextData(text, fk);
           setQuestions(parsed); setAvailableLessons(lessons); setIsLoading(false);
           // Load this file's per-file data from storage
           setFavIds(new Set(load('favs',[],fk)));
@@ -3489,6 +4348,103 @@ function App() {
   };
 
   useEffect(()=>{ if(activeFile&&AVAILABLE_FILES.includes(activeFile)) loadFile(activeFile); },[]);
+
+  // Session timer - increment every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSessionDuration(d => d + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Update study streak when question is marked done
+  useEffect(() => {
+    const today = new Date().toDateString();
+    if (lastStudyDate !== today && completedIds.size > 0) {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      const newStreak = lastStudyDate === yesterday ? studyStreak + 1 : 1;
+      setLastStudyDate(today);
+      setStudyStreak(newStreak);
+      save('lastStudyDate', today);
+      save('studyStreak', newStreak);
+    }
+  }, [completedIds.size]);
+
+  // Pomodoro timer effect
+  useEffect(() => {
+    if (!pomodoroActive) return;
+    const timer = setInterval(() => {
+      setPomodoroSecondsLeft(prev => {
+        if (prev <= 1) {
+          setPomodoroActive(false);
+          showToast('🍅 Pomodoro session complete! Take a break.', 'success');
+          return pomodoroTime * 60;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [pomodoroActive, pomodoroTime]);
+
+  // Update topic mastery based on completion
+  useEffect(() => {
+    const newMastery = {};
+    availableLessons.forEach(lesson => {
+      const lessonQs = questions.filter(q => q.lesson === lesson);
+      const doneCount = lessonQs.filter(q => completedIds.has(q.id)).length;
+      const percentage = lessonQs.length > 0 ? (doneCount / lessonQs.length) * 100 : 0;
+      if (percentage === 0) newMastery[lesson] = 'beginner';
+      else if (percentage < 50) newMastery[lesson] = 'intermediate';
+      else if (percentage < 100) newMastery[lesson] = 'advanced';
+      else newMastery[lesson] = 'expert';
+    });
+    setTopicMastery(newMastery);
+    save('topicMastery', newMastery);
+  }, [completedIds.size, questions, availableLessons]);
+
+  // Calculate estimated completion date
+  useEffect(() => {
+    if (dailyGoal <= 0 || completedIds.size >= questions.length) {
+      setEstimatedCompletion(null);
+      return;
+    }
+    const remaining = questions.length - completedIds.size;
+    const daysNeeded = Math.ceil(remaining / dailyGoal);
+    const completionDate = new Date();
+    completionDate.setDate(completionDate.getDate() + daysNeeded);
+    setEstimatedCompletion(completionDate);
+  }, [dailyGoal, completedIds.size, questions.length]);
+
+  // Session logging - log when unload
+  useEffect(() => {
+    const handleUnload = () => {
+      if (completedIds.size > 0 && sessionDuration > 60) { // Only log if >1 min studied
+        logStudySession();
+      }
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [logStudySession, completedIds.size, sessionDuration]);
+
+  // Study reminders
+  useEffect(() => {
+    if (!remindersEnabled) return;
+    const checkReminder = setInterval(() => {
+      const now = new Date();
+      const [hours, mins] = reminderTime.split(':').map(Number);
+      if (now.getHours() === hours && now.getMinutes() === mins) {
+        showToast('📚 Time to study! Open QnA Hub', 'success');
+      }
+    }, 60000); // Check every minute
+    return () => clearInterval(checkReminder);
+  }, [remindersEnabled, reminderTime]);
+
+  // Calculate benchmark periodically
+  useEffect(() => {
+    if (sessionLogs.length > 0 && completedIds.size % 10 === 0) {
+      calculateBenchmark();
+    }
+  }, [sessionLogs.length, completedIds.size]);
 
   // ── Toggles (useCallback keeps QuestionCard.memo() effective) ──
   const toggleFav      = useCallback((id) => setFavIds(p=>{const n=new Set(p);n.has(id)?n.delete(id):n.add(id);return n;}), []);
@@ -3611,6 +4567,263 @@ function App() {
     setSelectedBulk(new Set());
   }, [selectedBulk, completedIds, autoCollapseDone]);
 
+  // ── NEW FEATURES: Utility Functions ──
+  
+  // Format session duration
+  const formatSessionTime = (seconds) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}h ${m}m`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  };
+
+  // Get performance analytics
+  const getAnalytics = () => {
+    const total = questions.length;
+    const done = completedIds.size;
+    const correct = Object.values(wrongCounts).reduce((a,b) => a+b, 0);
+    const accuracy = done > 0 ? Math.round(((done - correct) / done) * 100) : 0;
+    const weakCount = Object.values(wrongCounts).filter(w => w >= 3).length;
+    return { total, done, accuracy, weakCount, remaining: total - done };
+  };
+
+  // Get smart study recommendations
+  // ✓ NEW: Collection sharing - export as full prompt
+  const exportCollectionAsShareable = (collection) => {
+    const shareData = {
+      type: 'qna-hub-collection',
+      name: collection.name,
+      color: collection.color,
+      qIds: collection.qIds,
+      description: `Shared collection with ${collection.qIds.length} questions`,
+      exportDate: new Date().toISOString(),
+      exportUser: 'User',
+      version: '1.0'
+    };
+    
+    const jsonStr = JSON.stringify(shareData, null, 2);
+    const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+    
+    const sharePrompt = `📚 QnA Hub Collection Share
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Collection:** ${shareData.name}
+**Questions:** ${shareData.qIds.length}
+**Created:** ${new Date(shareData.exportDate).toLocaleDateString()}
+
+**To import this collection:**
+1. Copy the code below
+2. Go to Collections → Import
+3. Paste and confirm
+
+\`\`\`
+${encoded}
+\`\`\`
+
+**Preview:** ${shareData.qIds.slice(0, 5).join(', ')}${shareData.qIds.length > 5 ? '...' : ''}`;
+    
+    return sharePrompt;
+  };
+
+  const importCollectionFromShare = (encodedData) => {
+    try {
+      const jsonStr = decodeURIComponent(escape(atob(encodedData)));
+      const data = JSON.parse(jsonStr);
+      if (data.type === 'qna-hub-collection') {
+        return data;
+      }
+      return null;
+    } catch (err) {
+      console.error('Import failed:', err);
+      return null;
+    }
+  };
+
+  const getSmartRecommendations = () => {
+    const recommendations = [];
+    questions.forEach(q => {
+      if (!completedIds.has(q.id)) {
+        recommendations.push({ q, type: 'new', priority: 1 });
+      } else if ((wrongCounts[q.id] || 0) >= 3) {
+        recommendations.push({ q, type: 'weak', priority: 0 });
+      } else if (srData[q.id]?.nextReview && new Date(srData[q.id].nextReview) <= new Date()) {
+        recommendations.push({ q, type: 'review', priority: 1.5 });
+      }
+    });
+    return recommendations.sort((a, b) => b.priority - a.priority).slice(0, 10);
+  };
+
+  // Set question difficulty
+  const setQDifficulty = (qId, level) => {
+    setQuestionDifficulty(prev => ({ ...prev, [qId]: level }));
+  };
+
+  // Export progress as CSV
+  const exportProgressCSV = () => {
+    let csv = 'Question,Lesson,Status,Attempts,Accuracy,Difficulty\n';
+    questions.forEach(q => {
+      const isDone = completedIds.has(q.id) ? 'Done' : 'Pending';
+      const attempts = wrongCounts[q.id] || 0;
+      const difficulty = questionDifficulty[q.id] || 'Not Rated';
+      csv += `"${q.question.replace(/"/g, '""')}","${q.lesson}","${isDone}",${attempts},${getAnalytics().accuracy}%,"${difficulty}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `study-progress-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    showToast('✓ Progress exported as CSV');
+    showToast('✓ Progress exported as CSV');
+  };
+
+  // Get performance insights
+  const getInsights = () => {
+    const analytics = getAnalytics();
+    const insights = [];
+    
+    if (analytics.accuracy > 85) {
+      insights.push('🌟 Excellent accuracy! You\'re mastering this material.');
+    } else if (analytics.accuracy > 70) {
+      insights.push('👍 Good progress! Keep practicing weak areas.');
+    } else if (analytics.accuracy > 50) {
+      insights.push('💪 You\'re improving. Focus on understanding weak concepts.');
+    }
+    
+    if (analytics.weakCount > analytics.total / 3) {
+      insights.push('⚠️ Many weak areas. Consider reviewing fundamentals.');
+    }
+    
+    const completionRate = (analytics.done / analytics.total) * 100;
+    if (completionRate > 90) {
+      insights.push('🏁 Almost done! Push to finish this set.');
+    } else if (completionRate === 100) {
+      insights.push('🎉 All questions completed! Practice mode for mastery.');
+    }
+    
+    return insights;
+  };
+
+  // Get lesson performance
+  const getLessonPerformance = (lesson) => {
+    const lessonQs = questions.filter(q => q.lesson === lesson);
+    const done = lessonQs.filter(q => completedIds.has(q.id)).length;
+    const correct = lessonQs.filter(q => {
+      const attempts = wrongCounts[q.id] || 0;
+      return completedIds.has(q.id) && attempts === 0;
+    }).length;
+    return {
+      lesson,
+      total: lessonQs.length,
+      done,
+      correct,
+      accuracy: lessonQs.length > 0 ? Math.round((correct / done) * 100) : 0,
+      mastery: topicMastery[lesson] || 'beginner'
+    };
+  };
+
+  // Format Pomodoro time
+  const formatPomodoroTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Get difficulty-filtered questions
+  const getDifficultyFilteredQuestions = () => {
+    if (!filterByDifficulty) return visibleQuestions;
+    return visibleQuestions.filter(q => questionDifficulty[q.id] === filterByDifficulty);
+  };
+
+  // Calculate study velocity
+  const getStudyVelocity = () => {
+    const elapsed = (Date.now() - sessionStartTime) / (1000 * 60); // minutes
+    const questionsCompleted = completedIds.size;
+    return elapsed > 0 ? Math.round((questionsCompleted / elapsed) * 10) / 10 : 0; // questions per minute
+  };
+
+  // Advanced search with regex
+  const searchWithRegex = (query) => {
+    try {
+      const regex = new RegExp(query, 'i');
+      return visibleQuestions.filter(q => regex.test(q.question) || regex.test(q.answerText));
+    } catch {
+      return [];
+    }
+  };
+
+  // Generate learning path (optimal study order)
+  const generateLearningPath = () => {
+    const path = [...availableLessons].sort((a, b) => {
+      const aProgress = (questions.filter(q => q.lesson === a && completedIds.has(q.id)).length / questions.filter(q => q.lesson === a).length) || 0;
+      const bProgress = (questions.filter(q => q.lesson === b && completedIds.has(q.id)).length / questions.filter(q => q.lesson === b).length) || 0;
+      return aProgress - bProgress; // Least completed first
+    });
+    setLearningPath(path);
+    save('learningPath', path);
+    showToast('✓ Learning path generated');
+  };
+
+  // Log study session
+  const logStudySession = useCallback(() => {
+    const analytics = getAnalytics();
+    const newLog = {
+      date: new Date().toISOString(),
+      duration: sessionDuration,
+      questionsStudied: completedIds.size,
+      accuracy: analytics.accuracy,
+      newTopics: availableLessons.length
+    };
+    const updated = [...sessionLogs, newLog].slice(-30); // Keep last 30
+    setSessionLogs(updated);
+    save('sessionLogs', updated);
+  }, [sessionDuration, completedIds.size]);
+
+  // Calculate performance benchmark
+  const calculateBenchmark = () => {
+    const analytics = getAnalytics();
+    const avgAccuracy = sessionLogs.length > 0 
+      ? Math.round(sessionLogs.reduce((a, b) => a + b.accuracy, 0) / sessionLogs.length)
+      : 0;
+    const percentile = analytics.accuracy >= avgAccuracy ? 'top' : 'standard';
+    setPerformanceBenchmark({ average: avgAccuracy, percentile, current: analytics.accuracy });
+  };
+
+  // Export to Anki format
+  const exportToAnki = () => {
+    let anki = '';
+    visibleQuestions.forEach(q => {
+      const front = q.question;
+      const back = `${q.answerKey}. ${q.answerText}\n\nExplanation: ${q.explanation}`;
+      anki += `${front}\t${back}\n`;
+    });
+    const blob = new Blob([anki], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `study-deck-${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    showToast('✓ Exported to Anki format');
+  };
+
+  // Toggle bookmark
+  const toggleBookmark = (qId) => {
+    setBookmarkedQuestions(prev => {
+      const n = new Set(prev);
+      n.has(qId) ? n.delete(qId) : n.add(qId);
+      return n;
+    });
+  };
+
+  // Save question comment
+  const saveQuestionComment = (qId, comment) => {
+    setQuestionComments(prev => ({...prev, [qId]: comment}));
+  };
+
   const bulkMarkWeak = useCallback(() => {
     if (!selectedBulk.size) return;
     const snap = {...wrongCounts};
@@ -3657,7 +4870,22 @@ function App() {
   // ── Filtered questions ──
   const allTags = useMemo(()=>{
     const counts = {};
-    questions.forEach(q=>{const t=customTags[q.id]||q.tag; if(t&&t.trim()) counts[t.trim()]=(counts[t.trim()]||0)+1;});
+    questions.forEach(q=>{
+      const customTag = customTags[q.id];
+      let tagStr = customTag || q.tag || '';
+      
+      // Split pipe-separated tags and process each
+      if (tagStr.includes(' | ')) {
+        const individualTags = tagStr.split(' | ').map(t => t.trim()).filter(t => t);
+        individualTags.forEach(t => {
+          counts[t] = (counts[t] || 0) + 1;
+        });
+      } else if (tagStr.trim()) {
+        const t = tagStr.trim();
+        counts[t] = (counts[t] || 0) + 1;
+      }
+    });
+    
     const normal = [], restTags = [];
     Object.keys(counts).sort().forEach(t=>{
       if (t.length > 40 && counts[t] === 1) restTags.push(t);
@@ -3675,10 +4903,22 @@ function App() {
 
     if (selectedLessons.size>0) f=f.filter(q=>selectedLessons.has(q.lesson));
     if (selectedTags.size>0) f=f.filter(q=>{
-      const t = (customTags[q.id]||q.tag||'').trim();
-      if (selectedTags.has(t)) return true;
-      if (selectedTags.has('__REST__') && allTags.restTags && allTags.restTags.includes(t)) return true;
-      return false;
+      const tagStr = (customTags[q.id]||q.tag||'').trim();
+      
+      // Split pipe-separated tags and check if any match selected tags
+      if (tagStr.includes(' | ')) {
+        const individualTags = tagStr.split(' | ').map(t => t.trim());
+        for (let tag of individualTags) {
+          if (selectedTags.has(tag)) return true;
+          if (selectedTags.has('__REST__') && allTags.restTags && allTags.restTags.includes(tag)) return true;
+        }
+        return false;
+      } else {
+        // Single tag
+        if (selectedTags.has(tagStr)) return true;
+        if (selectedTags.has('__REST__') && allTags.restTags && allTags.restTags.includes(tagStr)) return true;
+        return false;
+      }
     });
 
     const q=dSearch.trim();
@@ -4266,9 +5506,20 @@ function App() {
         {/* Right */}
         <div style={{display:'flex',alignItems:'center',gap:5,flexShrink:0}}>
           {questions.length>0&&<>
+            <button className="btn ghost" onClick={()=>setShowAnalytics(true)} title="Analytics & Progress"><I.Chart/></button>
+            <button className="btn ghost" onClick={()=>setShowStudyPlan(true)} title="Smart Study Plan">📋</button>
             <button className="btn ghost" onClick={()=>setShowCollections(true)} title="Collections"><I.Folder/></button>
-            <button className="btn ghost" onClick={()=>setShowReport(true)} title="Report (Ctrl+R)"><I.Chart/></button>
+            <button className="btn ghost" onClick={()=>setShowReport(true)} title="Report (Ctrl+R)">📊</button>
             <button className="btn ghost" onClick={()=>setShowKnowledgeMap(true)} title="Knowledge Map — visual progress by lesson & tag">🗺️</button>
+            <button className="btn ghost" onClick={()=>setShowGoalModal(true)} title="Set Daily Goal">🎯</button>
+            <button className="btn ghost" onClick={()=>setShowPomodoroTimer(true)} title="Pomodoro Timer">🍅</button>
+            <button className="btn ghost" onClick={()=>setShowInsights(true)} title="Study Insights">💡</button>
+            <button className="btn ghost" onClick={()=>setShowTopicMastery(true)} title="Topic Mastery">🏆</button>
+            <button className="btn ghost" onClick={()=>setShowSessionHistory(true)} title="Study Sessions">📚</button>
+            <button className="btn ghost" onClick={()=>setShowBookmarks(true)} title="Bookmarked Questions">⭐</button>
+            <button className="btn ghost" onClick={()=>setShowBenchmark(true)} title="Performance Benchmark">📊</button>
+            <button className="btn ghost" onClick={()=>setShowLearningPath(true)} title="Learning Path">🛤️</button>
+            <button className="btn ghost" onClick={()=>setShowStudyReminders(true)} title="Study Reminders">🔔</button>
             {practicePool.length>0&&(
               <div style={{position:'relative',display:'flex',gap:4}}>
                 <button className="btn primary" onClick={()=>{setPracticeMode('practice');setShowPractice(true);}} style={{padding:'6px 10px'}}><I.Brain/> Practice</button>
@@ -4283,6 +5534,25 @@ function App() {
           <ThemePicker theme={theme} setTheme={setTheme}/>
         </div>
       </div>
+
+      {/* ══ QUICK STATS BAR ══ */}
+      {questions.length > 0 && (
+        <div style={{background:'var(--card2)',borderBottom:'1px solid var(--border)',padding:'8px 20px',display:'flex',gap:16,alignItems:'center',flexWrap:'wrap',fontSize:12,color:'var(--muted)'}}>
+          <div style={{display:'flex',gap:4,alignItems:'center'}}><span>⏱️</span> <span>Session: {formatSessionTime(sessionDuration)}</span></div>
+          <div style={{display:'flex',gap:4,alignItems:'center'}}><span>✓</span> <span>Done: {completedIds.size}/{questions.length}</span></div>
+          {dailyGoal > 0 && (
+            <div style={{display:'flex',gap:4,alignItems:'center',color:completedIds.size >= dailyGoal ? 'var(--green)' : 'var(--muted)'}}><span>🎯</span> <span>Goal: {Math.min(completedIds.size, dailyGoal)}/{dailyGoal}</span></div>
+          )}
+          {studyStreak > 0 && (
+            <div style={{display:'flex',gap:4,alignItems:'center',color:'var(--yellow)'}}><span>🔥</span> <span>Streak: {studyStreak} days</span></div>
+          )}
+          <div style={{display:'flex',gap:4,alignItems:'center'}}><span>⚡</span> <span>Weak: {Object.values(wrongCounts).filter(w => w >= 3).length}</span></div>
+          <div style={{marginLeft:'auto'}}>
+            <button onClick={exportProgressCSV} style={{fontSize:11,padding:'4px 8px',borderRadius:'var(--rs)',background:'var(--pg)',border:'1px solid var(--primary)',color:'var(--primary)',cursor:'pointer',fontWeight:500}}>💾 Export CSV</button>
+          </div>
+        </div>
+      )}
+
 
       {/* ══ TOOLBAR ══ */}
       {questions.length>0&&!isLoading&&(
@@ -4319,6 +5589,7 @@ function App() {
                     onClear={()=>{setSelectedTags(new Set());setTagDDOpen(false);}}
                     questions={questions}
                     customTags={customTags}
+                    showToast={showToast}
                   />
                 )}
               </div>
@@ -4585,6 +5856,25 @@ function App() {
               {focusedIdx>=0&&visibleQuestions[focusedIdx]&&<span style={{color:'var(--primary)'}}>focused: Q{qNum(visibleQuestions[focusedIdx].id)} (J/K to navigate)</span>}
             </div>
 
+            {/* ✓ NEW: Selected tags display - show prominently */}
+            {selectedTags.size > 0 && (
+              <div style={{background:'var(--primary)',color:'#fff',padding:'12px 16px',borderRadius:'var(--r)',marginBottom:'16px',display:'flex',gap:'8px',flexWrap:'wrap',alignItems:'center',border:'2px solid var(--primary)'}}>
+                <strong style={{fontSize:'12px',textTransform:'uppercase',letterSpacing:'0.5px',whiteSpace:'nowrap'}}>📌 Filtered by:</strong>
+                {Array.from(selectedTags).map(tag => (
+                  <span key={tag} style={{background:'rgba(255,255,255,0.2)',padding:'6px 12px',borderRadius:'var(--rs)',fontSize:'13px',fontWeight:'500',display:'inline-flex',alignItems:'center',gap:'6px'}}>
+                    {tag}
+                    <button onClick={() => {
+                      setSelectedTags(prev => {
+                        const newSet = new Set(prev);
+                        newSet.delete(tag);
+                        return newSet;
+                      });
+                    }} style={{background:'none',border:'none',color:'#fff',cursor:'pointer',fontSize:'16px',padding:'0',lineHeight:'1'}}>×</button>
+                  </span>
+                ))}
+              </div>
+            )}
+
             {visibleQuestions.length===0?(
               <div style={{textAlign:'center',padding:60,border:'2px dashed var(--border2)',borderRadius:16,color:'var(--muted)'}} className="afu">
                 <div style={{fontSize:32,marginBottom:8}}>🔍</div>
@@ -4644,7 +5934,7 @@ function App() {
                       onToggleCollapse={toggleCollapse} onToggleFav={toggleFav}
                       onToggleDone={toggleDone} onTogglePin={togglePin}
                       onOpenNote={qId=>setNoteModal({qId,question:q.question})}
-                      noteText={notes[q.id]||''} onOpenTag={qId=>setTagModal({qId,question:q.question})}
+                      noteText={notes[q.id]||''} onOpenTag={qId=>setTagModal({qId,question:q.question,tags:q.tags||[]})}
                       customTag={customTags[q.id]||''}
                       compact={compact} collections={qCollections}
                       focused={focusedIdx===i} onFocusClick={()=>setFocusedIdx(i)}
@@ -4658,6 +5948,10 @@ function App() {
                       isBulkSelected={selectedBulk.has(q.id)}
                       onToggleBulk={toggleBulkSelect}
                       onJumpTag={jumpToTag}
+                      setQDifficulty={setQDifficulty}
+                      questionDifficulty={questionDifficulty}
+                      showToast={showToast}
+                      onCopyTags={setCopiedTags}
                     />
                   );
                 })}
@@ -4683,6 +5977,16 @@ function App() {
         }}
       />}
       {showReport&&<ReportModal questions={questions} favIds={favIds} completedIds={completedIds} notes={notes} srData={srData} weakIds={weakIds} sessions={sessions} streak={streak} onClose={()=>setShowReport(false)}/>}
+      {showAnalytics&&<AnalyticsModal analytics={getAnalytics()} sessionTime={formatSessionTime(sessionDuration)} streak={studyStreak} onClose={()=>setShowAnalytics(false)}/>}
+      {showGoalModal&&<DailyGoalModal currentGoal={dailyGoal} onSetGoal={(g)=>{setDailyGoal(g);save('dailyGoal',g);showToast(`✓ Daily goal set to ${g} questions`);}} onClose={()=>setShowGoalModal(false)}/>}
+      {showStudyPlan&&<StudyPlanModal recommendations={getSmartRecommendations()} onStartStudy={(q)=>{setPracticeMode('practice');setExamCustomPool([q]);setShowPractice(true);}} onClose={()=>setShowStudyPlan(false)}/>}
+      {showPomodoroTimer&&<PomodoroTimerModal timeLeft={pomodoroSecondsLeft} isActive={pomodoroActive} onToggle={()=>setPomodoroActive(!pomodoroActive)} onTimeChange={(mins)=>{setPomodoroTime(mins);setPomodoroSecondsLeft(mins*60);setPomodoroActive(false);}} onClose={()=>setShowPomodoroTimer(false)}/>}
+      {showInsights&&<InsightsModal insights={getInsights()} performance={getAnalytics()} velocity={getStudyVelocity()} estimatedCompletion={estimatedCompletion} onClose={()=>setShowInsights(false)}/>}
+      {showTopicMastery&&<TopicMasteryModal lessons={availableLessons} masteryData={Object.fromEntries(availableLessons.map(l=>[l,getLessonPerformance(l)]))} onClose={()=>setShowTopicMastery(false)}/>}
+      {showSessionHistory&&<SessionHistoryModal logs={sessionLogs} onClose={()=>setShowSessionHistory(false)}/>}
+      {showLearningPath&&<LearningPathModal path={learningPath} currentIndex={currentPathIndex} onSelectTopic={(idx)=>setCurrentPathIndex(idx)} onGenerate={generateLearningPath} onClose={()=>setShowLearningPath(false)}/>}
+      {showBookmarks&&<BookmarksModal questions={questions} bookmarkedIds={bookmarkedQuestions} onRemoveBookmark={(qId)=>toggleBookmark(qId)} onClose={()=>setShowBookmarks(false)}/>}
+      {showBenchmark&&<BenchmarkModal benchmark={performanceBenchmark} onClose={()=>setShowBenchmark(false)}/>}
       {showPractice&&(
         <PracticeMode
           questions={practiceMode==='wrong'?wrongPool:practiceMode==='exam'?(examCustomPool||practicePool.slice(0,40)):practicePool}
@@ -4722,6 +6026,9 @@ function App() {
         return <CollectionsModal
           questions={questions} collections={editSet.colls} setName={editSet.name}
           systemSets={sysSets}
+          exportCollectionAsShareable={exportCollectionAsShareable}
+          setShareableCollectionText={setShareableCollectionText}
+          setShowCollectionShare={setShowCollectionShare}
           onSave={(newColls,newName,silent)=>{
             setCollectionSets(prev=>prev.map(s=>s.id!==editSet.id?s:{...s,colls:newColls,name:newName||s.name}));
             if (!silent) { setShowCollections(false); showToast('Collections saved'); }
@@ -4731,7 +6038,58 @@ function App() {
           srData={srData} weakIds={weakIds}/>;
       })()}
       {noteModal&&<NoteModal qId={noteModal.qId} question={noteModal.question} noteText={notes[noteModal.qId]||''} onSave={saveNote} onClose={()=>setNoteModal(null)}/>}
-      {tagModal&&<TagEditModal qId={tagModal.qId} question={tagModal.question} currentTag={customTags[tagModal.qId]||''} onSave={saveCustomTag} onClose={()=>setTagModal(null)}/>}
+      {tagModal&&<TagEditModal qId={tagModal.qId} question={tagModal.question} currentTag={[(customTags[tagModal.qId]||''), ...(tagModal.tags||[])].filter(t=>t).join(' | ')} onSave={saveCustomTag} onClose={()=>setTagModal(null)} allQuestions={questions} copiedTags={copiedTags} showToast={showToast}/>}
+      
+      {/* ✓ NEW: Collection Share Modal */}
+      {showCollectionShare&&shareableCollectionText&&(
+        <div className="modal-bg" onClick={()=>setShowCollectionShare(false)}>
+          <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:700, maxHeight:'90vh', overflow:'auto'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+              <div style={{fontWeight:800,fontSize:17}}>📤 Share Collection</div>
+              <button className="btn ghost" onClick={()=>setShowCollectionShare(false)} style={{padding:'4px 8px'}}>✕</button>
+            </div>
+
+            <div style={{marginBottom:14, padding:'12px', background:'var(--gg)', borderRadius:'var(--r)', borderLeft:'4px solid var(--green)'}}>
+              <div style={{fontSize:12, color:'var(--green)', fontWeight:600}}>✓ Collection ready to share!</div>
+              <div style={{fontSize:11, color:'var(--green)', marginTop:4, opacity:0.8}}>Copy the prompt below and share it with anyone. They can import it directly.</div>
+            </div>
+
+            <div style={{marginBottom:16}}>
+              <label style={{display:'block', fontSize:12, fontWeight:600, color:'var(--muted)', marginBottom:8, textTransform:'uppercase', letterSpacing:'0.5px'}}>
+                📋 Share Prompt:
+              </label>
+              <textarea
+                readOnly
+                value={shareableCollectionText}
+                style={{
+                  width:'100%',
+                  height:300,
+                  padding:'12px',
+                  background:'var(--card)',
+                  border:'1px solid var(--border)',
+                  borderRadius:'var(--r)',
+                  color:'var(--text)',
+                  fontFamily:'var(--mono)',
+                  fontSize:12,
+                  lineHeight:'1.5',
+                  resize:'vertical'
+                }}
+              />
+            </div>
+
+            <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+              <button className="btn" onClick={()=>setShowCollectionShare(false)}>Close</button>
+              <button className="btn primary" onClick={()=>{
+                navigator.clipboard.writeText(shareableCollectionText);
+                showToast('✓ Prompt copied to clipboard');
+                setShowCollectionShare(false);
+              }}>
+                📋 Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ══ TOAST ══ */}
       {toast&&(
