@@ -495,7 +495,7 @@ function ThemePicker({ theme, setTheme }) {
       {open&&(
         <div style={{position:'absolute',top:'calc(100% + 6px)',right:0,
           background:'var(--card)',border:'1px solid var(--border2)',borderRadius:'var(--r)',
-          boxShadow:'var(--shadowl)',zIndex:200,overflow:'hidden',minWidth:170,animation:'fadeUp .15s ease-out'}}>
+          boxShadow:'var(--shadowl)',zIndex:300,overflow:'auto',maxHeight:'70vh',minWidth:170,animation:'fadeUp .15s ease-out'}}>
           {/* Static themes */}
           <div style={{padding:'6px 10px 3px',fontSize:10,fontWeight:700,color:'var(--muted)',
             textTransform:'uppercase',letterSpacing:'.07em'}}>Themes</div>
@@ -4073,7 +4073,11 @@ function App() {
   const [showStudyReminders, setShowStudyReminders] = useState(false);
   const [reminderTime, setReminderTime] = useState(() => load('reminderTime', '09:00')); // HH:MM format
   const [remindersEnabled, setRemindersEnabled] = useState(() => load('remindersEnabled', false));
-  const [bookmarkedQuestions, setBookmarkedQuestions] = useState(() => load('bookmarked', new Set())); // {qId}
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState(() => {
+    const loaded = load('bookmarked', new Set());
+    // ✓ FIX: Ensure Set (JSON.parse turns Set into array)
+    return loaded instanceof Set ? loaded : new Set(Array.isArray(loaded) ? loaded : []);
+  });
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [performanceBenchmark, setPerformanceBenchmark] = useState(() => load('benchmark', null)); // {average, percentile}
   const [showBenchmark, setShowBenchmark] = useState(false);
@@ -4446,6 +4450,41 @@ function App() {
     }
   }, [sessionLogs.length, completedIds.size]);
 
+  // ✓ NEW: Global Escape key handler - closes all modals
+  useEffect(() => {
+    const handleEscapeKey = (e) => {
+      if (e.key === 'Escape') {
+        // Close all modals
+        setShowCollections(false);
+        setShowBookmarks(false);
+        setShowAnalytics(false);
+        setShowReport(false);
+        setShowPractice(false);
+        setShowExamLauncher(false);
+        setShowShortcuts(false);
+        setShowTVLauncher(false);
+        setShowNarration(false);
+        setShowKnowledgeMap(false);
+        setShowGoalModal(false);
+        setShowStudyPlan(false);
+        setShowPomodoroTimer(false);
+        setShowInsights(false);
+        setShowTopicMastery(false);
+        setShowComparisonMode(false);
+        setShowAdvancedSearch(false);
+        setShowSessionHistory(false);
+        setShowLearningPath(false);
+        setShowBenchmark(false);
+        setShowCollectionShare(false);
+        // Clear search if it's focused
+        setDSearch('');
+        setSearchQuery('');
+      }
+    };
+    window.addEventListener('keydown', handleEscapeKey);
+    return () => window.removeEventListener('keydown', handleEscapeKey);
+  }, []);
+
   // ── Toggles (useCallback keeps QuestionCard.memo() effective) ──
   const toggleFav      = useCallback((id) => setFavIds(p=>{const n=new Set(p);n.has(id)?n.delete(id):n.add(id);return n;}), []);
   const toggleDone = useCallback((id) => {
@@ -4481,12 +4520,14 @@ function App() {
 
   const jumpToTag = useCallback(t => {
     setSelectedTags(prev => {
-      // If tag belongs to the REST group, select __REST__ instead
-      // We derive this inline from questions+customTags to avoid stale closure
-      const counts = {};
-      // We can't access allTags here safely; pass the decision via a state update trick
-      // Instead, just always set the literal tag — the filter handles __REST__ via allTags
-      return new Set([t]);
+      // ✓ FIXED: ADD tag beside existing (toggle), don't replace
+      const newSet = new Set(prev);
+      if (newSet.has(t)) {
+        newSet.delete(t);  // Already selected → remove (toggle off)
+      } else {
+        newSet.add(t);     // Not selected → add (toggle on)
+      }
+      return newSet;
     });
     setTagDDOpen(false);
     window.scrollTo({top:0,behavior:'smooth'});
@@ -4606,13 +4647,18 @@ function App() {
     const jsonStr = JSON.stringify(shareData, null, 2);
     const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
     
+    // ✓ NEW: Include filtered tags in export
+    const filterInfo = selectedTags.size > 0 
+      ? `**Filtered by:** ${Array.from(selectedTags).join(', ')}\n`
+      : '';
+    
     const sharePrompt = `📚 QnA Hub Collection Share
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Collection:** ${shareData.name}
 **Questions:** ${shareData.qIds.length}
 **Created:** ${new Date(shareData.exportDate).toLocaleDateString()}
-
+${filterInfo}
 **To import this collection:**
 1. Copy the code below
 2. Go to Collections → Import
