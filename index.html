@@ -2703,7 +2703,7 @@ function LessonFilterPanel({ availableLessons, selectedLessons, onToggle, onClea
   );
 }
 
-function TagFilterPanel({ allTags, restTags, selectedTags, excludeTags, onToggle, onToggleExclude, onClear, questions, customTags, floatMode, showToast }) {
+function TagFilterPanel({ allTags, restTags, selectedTags, excludeTags = new Set(), onToggle, onToggleExclude = () => {}, onClear, questions, customTags, floatMode, showToast }) {
   const [q, setQ] = useState('');
   const [excludeMode, setExcludeMode] = useState(false); // ✓ NEW: Toggle between include/exclude
   const inputRef = useRef(null);
@@ -2746,10 +2746,15 @@ function TagFilterPanel({ allTags, restTags, selectedTags, excludeTags, onToggle
   },[allTags, q]);
 
   const copyTagToClipboard = (tag, e) => {
+    e.preventDefault();
     e.stopPropagation();
     const copyText = tag === '__REST__' ? `Rest (${restTags?.length || 0} misc)` : tag;
-    navigator.clipboard.writeText(copyText);
-    if (showToast) showToast(`✓ Copied: ${copyText}`);
+    navigator.clipboard.writeText(copyText).then(() => {
+      if (showToast) showToast(`✓ Copied: ${copyText}`);
+    }).catch(err => {
+      console.error('Copy failed:', err);
+      if (showToast) showToast(`Failed to copy`, 'error');
+    });
   };
 
   return (
@@ -5684,7 +5689,13 @@ ${encoded}
                     allTags={allTags.tags}
                     restTags={allTags.restTags}
                     selectedTags={selectedTags}
+                    excludeTags={excludeTags}
                     onToggle={toggleTag}
+                    onToggleExclude={(tag) => setExcludeTags(prev => {
+                      const n = new Set(prev);
+                      n.has(tag) ? n.delete(tag) : n.add(tag);
+                      return n;
+                    })}
                     onClear={()=>{setSelectedTags(new Set());setTagDDOpen(false);}}
                     questions={questions}
                     customTags={customTags}
