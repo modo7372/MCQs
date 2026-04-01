@@ -2389,7 +2389,13 @@ function LearningPathModal({ path, currentIndex, onSelectTopic, onGenerate, onCl
 
 // ═══════════════════════════════ BOOKMARKS MODAL ═══════════════════════════════
 function BookmarksModal({ questions, bookmarkedIds, onRemoveBookmark, onClose }) {
-  const bookmarked = questions.filter(q => bookmarkedIds.has(q.id));
+  // ✓ FIX: Ensure bookmarkedIds is a Set and filter properly
+  const bookmarked = questions.filter(q => {
+    if (!bookmarkedIds) return false;
+    if (typeof bookmarkedIds.has === 'function') return bookmarkedIds.has(q.id);
+    if (Array.isArray(bookmarkedIds)) return bookmarkedIds.includes(q.id);
+    return false;
+  });
   
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:300}}>
@@ -2403,12 +2409,12 @@ function BookmarksModal({ questions, bookmarkedIds, onRemoveBookmark, onClose })
           <div style={{textAlign:'center',padding:20,color:'var(--muted)'}}>No bookmarks yet. Click ⭐ to bookmark questions!</div>
         ) : (
           <div style={{maxHeight:'65vh',overflow:'auto'}}>
-            {bookmarked.map((q, idx) => (
-              <div key={idx} style={{background:'var(--card2)',padding:12,marginBottom:10,borderRadius:'var(--rs)'}}>
+            {bookmarked.map((q) => (
+              <div key={q.id} style={{background:'var(--card2)',padding:12,marginBottom:10,borderRadius:'var(--rs)'}}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'start',gap:8}}>
                   <div style={{flex:1}}>
                     <div style={{fontSize:12,fontWeight:500,marginBottom:4}}>{q.question.substring(0,80)}...</div>
-                    <div style={{fontSize:10,color:'var(--muted)'}}>📚 {q.lesson}</div>
+                    <div style={{fontSize:10,color:'var(--muted)'}}>📚 {q.lesson || 'General'}</div>
                   </div>
                   <button onClick={() => onRemoveBookmark(q.id)} style={{background:'none',border:'none',cursor:'pointer',color:'var(--yellow)',fontSize:16}}>✕</button>
                 </div>
@@ -2697,8 +2703,9 @@ function LessonFilterPanel({ availableLessons, selectedLessons, onToggle, onClea
   );
 }
 
-function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, questions, customTags, floatMode, showToast }) {
+function TagFilterPanel({ allTags, restTags, selectedTags, excludeTags, onToggle, onToggleExclude, onClear, questions, customTags, floatMode, showToast }) {
   const [q, setQ] = useState('');
+  const [excludeMode, setExcludeMode] = useState(false); // ✓ NEW: Toggle between include/exclude
   const inputRef = useRef(null);
   useEffect(()=>{ setTimeout(()=>inputRef.current?.focus(), 50); }, []);
 
@@ -2762,16 +2769,24 @@ function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, qu
           placeholder="Search tags…"
           style={{flex:1,background:'none',border:'none',outline:'none',fontSize:13,color:'var(--text)',fontFamily:'var(--font)'}}/>
         {q&&<button onClick={()=>setQ('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--muted)',padding:0,lineHeight:1}}><I.X s={12}/></button>}
+        {/* ✓ NEW: Include/Exclude mode toggle */}
+        <button onClick={() => setExcludeMode(!excludeMode)} 
+          title={excludeMode ? "Click to INCLUDE tags" : "Click to EXCLUDE tags"}
+          style={{background:'none',border:'1px solid var(--border)',borderRadius:'var(--rs)',cursor:'pointer',color:excludeMode?'var(--red)':'var(--primary)',padding:'2px 6px',fontSize:11,fontWeight:700}}>
+          {excludeMode ? '🚫 Exclude' : '✓ Include'}
+        </button>
       </div>
 
-      {/* Selected tags display - show obviously */}
+      {/* Selected/Excluded tags display */}
       {selectedTags.size > 0 && (
-        <div style={{padding:'10px 12px', background:'var(--pg)', borderBottom:'2px solid var(--primary)', display:'flex', flexWrap:'wrap', gap:6, alignItems:'center'}}>
-          <span style={{fontSize:10, fontWeight:700, color:'var(--primary)', textTransform:'uppercase', letterSpacing:'0.5px'}}>Selected:</span>
+        <div style={{padding:'10px 12px', background:excludeMode?'rgba(220,38,38,0.1)':'var(--pg)', borderBottom:'2px solid '+(excludeMode?'var(--red)':'var(--primary)'), display:'flex', flexWrap:'wrap', gap:6, alignItems:'center'}}>
+          <span style={{fontSize:10, fontWeight:700, color:excludeMode?'var(--red)':'var(--primary)', textTransform:'uppercase', letterSpacing:'0.5px'}}>
+            {excludeMode ? '🚫 Exclude:' : '✓ Include:'}
+          </span>
           {Array.from(selectedTags).map(tag => (
-            <span key={tag} style={{background:'var(--primary)', color:'#fff', padding:'4px 10px', borderRadius:'var(--rs)', fontSize:12, fontWeight:600, display:'flex', alignItems:'center', gap:4}}>
+            <span key={tag} style={{background:excludeMode?'var(--red)':'var(--primary)', color:'#fff', padding:'4px 10px', borderRadius:'var(--rs)', fontSize:12, fontWeight:600, display:'flex', alignItems:'center', gap:4}}>
               {tag === '__REST__' ? `Rest (${restTags?.length || 0})` : tag}
-              <button onClick={e => { e.stopPropagation(); onToggle(tag); }} style={{background:'none', border:'none', color:'#fff', cursor:'pointer', fontSize:14, padding:0, lineHeight:1}}>×</button>
+              <button onClick={e => { e.stopPropagation(); excludeMode ? onToggleExclude(tag) : onToggle(tag); }} style={{background:'none', border:'none', color:'#fff', cursor:'pointer', fontSize:14, padding:0, lineHeight:1}}>×</button>
             </span>
           ))}
         </div>
@@ -2779,26 +2794,27 @@ function TagFilterPanel({ allTags, restTags, selectedTags, onToggle, onClear, qu
 
       {/* Clear all */}
       {selectedTags.size>0&&(
-        <div className="dd-item" onClick={onClear} style={{color:'var(--red)',fontWeight:700,borderBottom:'1px solid var(--border)',fontSize:12,cursor:'pointer'}}>✕ Clear all ({selectedTags.size})</div>
+        <div className="dd-item" onClick={() => { onClear(); setExcludeMode(false); }} style={{color:'var(--red)',fontWeight:700,borderBottom:'1px solid var(--border)',fontSize:12,cursor:'pointer'}}>✕ Clear all ({selectedTags.size})</div>
       )}
 
       {/* Scrollable list */}
       <div style={{maxHeight:280,overflowY:'auto'}}>
         {filtered.length===0&&<div style={{padding:'10px 14px',fontSize:12,color:'var(--muted)'}}>No matches</div>}
         {filtered.map(t=>{
-          const active = selectedTags.has(t);
+          // ✓ NEW: Consider both include and exclude modes
+          const active = excludeMode ? excludeTags.has(t) : selectedTags.has(t);
           const cnt = tagCounts[t]||0;
           const isRest = t==='__REST__';
           const label = isRest ? `Rest (${restTags?.length||0} misc)` : t;
           return (
-            <div key={t} className="dd-item" onClick={()=>onToggle(t)}
+            <div key={t} className="dd-item" onClick={()=> excludeMode ? onToggleExclude(t) : onToggle(t)}
               title={isRest ? `Tags >40 chars with 1 question:\n${(restTags||[]).slice(0,8).join('\n')}${restTags?.length>8?'\n…':''}` : t}
-              style={{background: active ? 'var(--pg)' : undefined, display:'flex', alignItems:'center', gap:8, justifyContent:'space-between', paddingRight:8}}>
+              style={{background: active ? (excludeMode ? 'rgba(220,38,38,0.2)' : 'var(--pg)') : undefined, display:'flex', alignItems:'center', gap:8, justifyContent:'space-between', paddingRight:8}}>
               <div style={{display:'flex', alignItems:'center', gap:8, flex:1, minWidth:0}}>
                 <input type="checkbox" checked={active} onChange={()=>{}}
-                  style={{accentColor:'var(--primary)',flexShrink:0}}/>
+                  style={{accentColor:excludeMode?'var(--red)':'var(--primary)',flexShrink:0}}/>
                 <span style={{flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',
-                  color: active ? 'var(--primary)' : undefined,
+                  color: active ? (excludeMode ? 'var(--red)' : 'var(--primary)') : undefined,
                   fontStyle: isRest ? 'italic' : undefined}}>
                   {label}
                 </span>
@@ -3998,6 +4014,7 @@ function App() {
   const [qFilters, setQFilters] = useState(new Set(['unsolved'])); // multi-select: 'done'|'unsolved'|'fav'|'weak'|'all'
   const [selectedLessons, setSelectedLessons] = useState(new Set());
   const [selectedTags, setSelectedTags] = useState(new Set());
+  const [excludeTags, setExcludeTags] = useState(new Set()); // ✓ NEW: Anti-tag filter (removes questions with these tags)
   const [lessonDDOpen, setLessonDDOpen] = useState(false);
   const [tagDDOpen, setTagDDOpen] = useState(false);
   const [displaySettings, setDisplaySettings] = useState(()=>load('display',{showOptions:true,showAnswer:true,showExplanation:true,showTags:true}));
@@ -4967,6 +4984,25 @@ ${encoded}
       }
     });
 
+    // ✓ NEW: Anti-tag filter (exclude questions with selected tags)
+    if (excludeTags.size>0) f=f.filter(q=>{
+      const tagStr = (customTags[q.id]||q.tag||'').trim();
+      if (!tagStr) return true; // Keep questions without tags
+      
+      if (tagStr.includes(' | ')) {
+        const individualTags = tagStr.split(' | ').map(t => t.trim());
+        for (let tag of individualTags) {
+          if (excludeTags.has(tag)) return false; // Remove if has excluded tag
+          if (excludeTags.has('__REST__') && allTags.restTags && allTags.restTags.includes(tag)) return false;
+        }
+        return true;
+      } else {
+        if (excludeTags.has(tagStr)) return false; // Remove if has excluded tag
+        if (excludeTags.has('__REST__') && allTags.restTags && allTags.restTags.includes(tagStr)) return false;
+        return true;
+      }
+    });
+
     const q=dSearch.trim();
     if (q) {
       const range=q.match(/^(\d+)\s*-\s*(\d+)$/);
@@ -5000,7 +5036,7 @@ ${encoded}
     }
 
     return f;
-  },[questions,dSearch,activeTab,activeCollId,favIds,completedIds,pinnedIds,selectedLessons,selectedTags,allTags,srData,weakIds,collections,customTags,qFilters]);
+  },[questions,dSearch,activeTab,activeCollId,favIds,completedIds,pinnedIds,selectedLessons,selectedTags,excludeTags,allTags,srData,weakIds,collections,customTags,qFilters]);
 
   const pct = questions.length>0?Math.round((completedIds.size/questions.length)*100):0;
 
@@ -5066,6 +5102,23 @@ ${encoded}
       if (e.key==='G'&&e.shiftKey) { window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); return; }
       if (e.key==='Escape') { setDSearch(''); setSearchQuery(''); setShowShortcuts(false); setShowReport(false); return; }
       if (e.key==='t'||e.key==='T') { setTheme(p=>{ const ids=THEMES.map(t=>t.id); const i=ids.indexOf(p); return ids[(i+1)%ids.length]; }); return; }
+      
+      // ✓ NEW: EMH shortcuts for Easy/Medium/Hard filtering
+      if (e.key==='e'||e.key==='E') {
+        e.preventDefault();
+        setQDifficulty(filterByDifficulty==='easy'?null:'easy');
+        return;
+      }
+      if (e.key==='m'||e.key==='M') {
+        e.preventDefault();
+        setQDifficulty(filterByDifficulty==='medium'?null:'medium');
+        return;
+      }
+      if (e.key==='h'||e.key==='H') {
+        e.preventDefault();
+        setQDifficulty(filterByDifficulty==='hard'?null:'hard');
+        return;
+      }
 
       // Navigation
       if (e.key==='j'||e.key==='ArrowDown') {
