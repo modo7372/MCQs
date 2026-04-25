@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QnA Hub - Login/Signup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-google {
+            background: white;
+            border: 1px solid #ddd;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-google:hover {
+            background: #f9f9f9;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .toggle-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toggle-link a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #signup-form {
+            display: none;
+        }
+
+        #password-reset-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📚 QnA Hub</h1>
+            <p>Master Your Knowledge</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2 style="margin-bottom: 20px; font-size: 20px; color: #333;">Welcome Back</h2>
+                
+                <div class="error" id="login-error"></div>
+                <div class="success" id="login-success"></div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="forgot-password">
+                        <a onclick="showPasswordReset()">Forgot password?</a>
+                    </div>
+
+                    <div class="loading" id="login-loading">
+                        <div class="spinner"></div>
+                        <p>Signing in...</p>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">Sign In</button>
+                </form>
+
+                <!-- Google OAuth -->
+                <button class="btn-google" onclick="handleGoogleLogin()">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+
+                <div class="toggle-link">
+                    Don't have an account? <a onclick="showSignup()">Sign up</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form">
+                <h2 style="margin-bottom: 20px; font-size: 20px; color: #333;">Create Account</h2>
+                
+                <div class="error" id="signup-error"></div>
+                <div class="success" id="signup-success"></div>
+
+                <form onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="••••••••" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" placeholder="••••••••" required minlength="6">
+                    </div>
+
+                    <div class="loading" id="signup-loading">
+                        <div class="spinner"></div>
+                        <p>Creating account...</p>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">Create Account</button>
+                </form>
+
+                <div class="toggle-link">
+                    Already have an account? <a onclick="showLogin()">Sign in</a>
+                </div>
+            </div>
+
+            <!-- Password Reset Form -->
+            <div id="password-reset-form">
+                <h2 style="margin-bottom: 20px; font-size: 20px; color: #333;">Reset Password</h2>
+                
+                <div class="error" id="reset-error"></div>
+                <div class="success" id="reset-success"></div>
+
+                <form onsubmit="handlePasswordReset(event)">
+                    <div class="form-group">
+                        <label for="reset-email">Email Address</label>
+                        <input type="email" id="reset-email" placeholder="you@example.com" required>
+                    </div>
+
+                    <p style="font-size: 12px; color: #666; margin-bottom: 20px;">
+                        We'll send you a link to reset your password.
+                    </p>
+
+                    <div class="loading" id="reset-loading">
+                        <div class="spinner"></div>
+                        <p>Sending reset link...</p>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Send Reset Link</button>
+                    <button type="button" class="btn-secondary" onclick="showLogin()" style="width: 100%;">Back to Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const FIREBASE_CONFIG = {
+            apiKey: "AIzaSyATJTqv2BM1da1PmJCR6KcSVFrTj0skIko",
+            authDomain: "mcqs-on-page.firebaseapp.com",
+            projectId: "mcqs-on-page",
+            storageBucket: "mcqs-on-page.firebasestorage.app",
+            messagingSenderId: "150876967793",
+            appId: "1:150876967793:web:5cf7834f790f5f22d15cd0"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(FIREBASE_CONFIG);
+        const auth = firebase.getAuth(app);
+        const db = firebase.getFirestore(app);
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // UI CONTROL FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════════════
+
+        function showLogin() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('password-reset-form').style.display = 'none';
+            clearAllErrors();
+        }
+
+        function showSignup() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+            document.getElementById('password-reset-form').style.display = 'none';
+            clearAllErrors();
+        }
+
+        function showPasswordReset() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('password-reset-form').style.display = 'block';
+            clearAllErrors();
+        }
+
+        function clearAllErrors() {
+            document.querySelectorAll('.error, .success').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = '❌ ' + message;
+            element.classList.add('show');
+        }
+
+        function showSuccess(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = '✅ ' + message;
+            element.classList.add('show');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // LOGIN HANDLER
+        // ═══════════════════════════════════════════════════════════════════════
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const loading = document.getElementById('login-loading');
+            const errorDiv = document.getElementById('login-error');
+
+            loading.style.display = 'block';
+            errorDiv.classList.remove('show');
+
+            try {
+                const userCredential = await firebase.getAuth().signInWithEmailAndPassword(auth, email, password);
+                showSuccess('login-success', 'Login successful! Redirecting...');
+                
+                // Store session
+                localStorage.setItem('qna_userId', userCredential.user.uid);
+                localStorage.setItem('qna_userEmail', userCredential.user.email);
+                
+                // Redirect to main app
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                showError('login-error', getErrorMessage(error.code));
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SIGNUP HANDLER
+        // ═══════════════════════════════════════════════════════════════════════
+
+        async function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+            const loading = document.getElementById('signup-loading');
+            const errorDiv = document.getElementById('signup-error');
+
+            if (password !== confirm) {
+                showError('signup-error', 'Passwords do not match');
+                return;
+            }
+
+            loading.style.display = 'block';
+            errorDiv.classList.remove('show');
+
+            try {
+                const userCredential = await firebase.getAuth().createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Create user document in Firestore
+                await firebase.getFirestore().collection('users').doc(user.uid).set({
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: name,
+                    photoURL: null,
+                    createdAt: new Date().toISOString(),
+                    lastSync: new Date().toISOString(),
+                    admin: false
+                });
+
+                showSuccess('signup-success', 'Account created! Redirecting...');
+                
+                // Store session
+                localStorage.setItem('qna_userId', user.uid);
+                localStorage.setItem('qna_userEmail', user.email);
+                
+                // Redirect to main app
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                showError('signup-error', getErrorMessage(error.code));
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // GOOGLE OAUTH HANDLER
+        // ═══════════════════════════════════════════════════════════════════════
+
+        async function handleGoogleLogin() {
+            const loading = document.createElement('div');
+            loading.className = 'loading';
+            loading.innerHTML = '<div class="spinner"></div><p>Signing in with Google...</p>';
+            document.getElementById('login-form').appendChild(loading);
+
+            try {
+                const result = await firebase.getAuth().signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                // Check if user exists, if not create
+                const userDoc = await firebase.getFirestore().collection('users').doc(user.uid).get();
+                if (!userDoc.exists()) {
+                    await firebase.getFirestore().collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        createdAt: new Date().toISOString(),
+                        lastSync: new Date().toISOString(),
+                        admin: false
+                    });
+                }
+
+                // Store session
+                localStorage.setItem('qna_userId', user.uid);
+                localStorage.setItem('qna_userEmail', user.email);
+                
+                // Redirect to main app
+                window.location.href = 'index.html';
+            } catch (error) {
+                showError('login-error', getErrorMessage(error.code));
+                loading.remove();
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // PASSWORD RESET HANDLER
+        // ═══════════════════════════════════════════════════════════════════════
+
+        async function handlePasswordReset(event) {
+            event.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            const loading = document.getElementById('reset-loading');
+            const errorDiv = document.getElementById('reset-error');
+
+            loading.style.display = 'block';
+            errorDiv.classList.remove('show');
+
+            try {
+                await firebase.getAuth().sendPasswordResetEmail(auth, email);
+                showSuccess('reset-success', 'Reset link sent! Check your email.');
+                
+                setTimeout(() => {
+                    showLogin();
+                }, 2000);
+            } catch (error) {
+                showError('reset-error', getErrorMessage(error.code));
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // ERROR MESSAGE HELPER
+        // ═══════════════════════════════════════════════════════════════════════
+
+        function getErrorMessage(code) {
+            const messages = {
+                'auth/email-already-in-use': 'Email already in use',
+                'auth/invalid-email': 'Invalid email address',
+                'auth/weak-password': 'Password must be at least 6 characters',
+                'auth/user-not-found': 'User not found',
+                'auth/wrong-password': 'Incorrect password',
+                'auth/popup-closed-by-user': 'Sign-in cancelled',
+                'auth/account-exists-with-different-credential': 'Account exists with different credential',
+                'auth/too-many-requests': 'Too many failed attempts. Try again later.'
+            };
+            return messages[code] || 'An error occurred. Please try again.';
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // INITIALIZE
+        // ═══════════════════════════════════════════════════════════════════════
+
+        // Check if already logged in
+        firebase.getAuth().onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Already logged in, redirect to app
+                localStorage.setItem('qna_userId', user.uid);
+                localStorage.setItem('qna_userEmail', user.email);
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Show login form by default
+        showLogin();
+    </script>
+</body>
+</html>
