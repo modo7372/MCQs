@@ -1,0 +1,1854 @@
+{
+  "questions": [
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which of the following best defines Delirium?",
+      "options": [
+        "A chronic, progressive neurocognitive disorder",
+        "An acute, fluctuating disturbance in attention and awareness",
+        "A primary deficit in long-term memory storage",
+        "A persistent state of low mood and psychomotor retardation"
+      ],
+      "answerKey": "B",
+      "answerText": "An acute, fluctuating disturbance in attention and awareness",
+      "explanation": "Unlike dementia, which is chronic and progressive, delirium is characterized by an abrupt decline in baseline cognitive function with a hallmark fluctuating course, marked by deficits in attention and situational awareness.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which of the following populations is at the highest risk for developing delirium?",
+      "options": [
+        "Teenagers",
+        "Young adults",
+        "Older adults",
+        "Children"
+      ],
+      "answerKey": "C",
+      "answerText": "Older adults",
+      "explanation": "Older adults have a lower physiological brain reserve and are more vulnerable to the neuropsychiatric effects of systemic stressors, infections, medications, and sensory deprivation.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Delirium can be caused by a variety of factors. Which of the following is LEAST likely to trigger delirium?",
+      "options": [
+        "Severe dehydration",
+        "A serious systemic infection",
+        "Achieving a restful, high-quality night's sleep",
+        "Acute electrolyte imbalance"
+      ],
+      "answerKey": "C",
+      "answerText": "Achieving a restful, high-quality night's sleep",
+      "explanation": "Dehydration, infection, and electrolyte imbalances disrupt metabolic brain function, triggering delirium. High-quality sleep supports brain health and lowers delirium risk.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which of the following diagnostic tools is most helpful in confirming a diagnosis of delirium by detecting generalized slowing of brain activity?",
+      "options": [
+        "Blood coagulation test",
+        "Chest X-ray",
+        "EEG (Electroencephalogram)",
+        "Structural MRI"
+      ],
+      "answerKey": "C",
+      "answerText": "EEG (Electroencephalogram)",
+      "explanation": "Delirium classically produces generalized diffuse background slowing (theta and delta activity) on an EEG, distinguishing it from primary psychiatric illnesses or non-delirious dementia states.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "What is the most common underlying cause of delirium?",
+      "options": [
+        "Electrolyte imbalance",
+        "Hypoglycemia",
+        "Infection",
+        "Drug intoxication"
+      ],
+      "answerKey": "C",
+      "answerText": "Infection",
+      "explanation": "Systemic infections—particularly urinary tract infections (UTIs) and pneumonias—are the most common precipitating causes of delirium in vulnerable, hospitalized, or older patient cohorts.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which non-pharmacological intervention has been proven to be most effective in preventing delirium in a hospital setting?",
+      "options": [
+        "Total sensory deprivation",
+        "Continuous loud background noise",
+        "Frequent reorientation and maintaining a normal sleep-wake cycle",
+        "Restricting all family visits"
+      ],
+      "answerKey": "C",
+      "answerText": "Frequent reorientation and maintaining a normal sleep-wake cycle",
+      "explanation": "Environmental interventions, such as early mobilization, cognitive stimulation, frequent verbal reorientation, and preserving natural circadian rhythms, represent the gold standard of preventative delirium care.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which of the following is NOT a common symptom of Delirium?",
+      "options": [
+        "Visual hallucinations",
+        "Disturbance of the sleep-wake cycle",
+        "Fixed focal neurological deficits",
+        "Fluctuating level of consciousness"
+      ],
+      "answerKey": "C",
+      "answerText": "Fixed focal neurological deficits",
+      "explanation": "Focal deficits (e.g., hemiparesis, localized sensory loss) point toward structural focal lesions like ischemic strokes or intracranial hemorrhages rather than the global encephalopathic process of delirium.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which of the following is the hallmark feature that distinguishes Delirium from Dementia?",
+      "options": [
+        "Long-term memory loss",
+        "Acute onset with fluctuating course",
+        "Presence of aphasia",
+        "Irreversible cognitive decline"
+      ],
+      "answerKey": "B",
+      "answerText": "Acute onset with fluctuating course",
+      "explanation": "While both feature cognitive impairment, delirium develops over hours to days with significant symptom fluctuations throughout the day, whereas dementia develops insidiously and remains stable day-to-day.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Which of the following patients is at the highest risk of developing delirium?",
+      "options": [
+        "A 30-year-old patient with mild anxiety",
+        "A 45-year-old patient with controlled hypertension",
+        "A 70-year-old patient who is severely dehydrated after recent surgery",
+        "A 25-year-old patient with no medical history"
+      ],
+      "answerKey": "C",
+      "answerText": "A 70-year-old patient who is severely dehydrated after recent surgery",
+      "explanation": "Advanced age, acute post-operative status, and dehydration combine to create a highly susceptible state for delirium due to homeostatic stress and neuroinflammatory changes.",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Delerium",
+      "question": "Types of delirium includes:",
+      "options": [
+        "Hyperactive",
+        "Hypoactive",
+        "Mixed",
+        "All of the above"
+      ],
+      "answerKey": "D",
+      "answerText": "All of the above",
+      "explanation": "Delirium presents clinically in three distinct motor subtypes: hyperactive (agitated, hallucinations), hypoactive (withdrawn, lethargic), and mixed (alternating between both).\n\n---\n\n## 2. Dementia",
+      "tags": [
+        "delerium"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is the most common type of dementia?",
+      "options": [
+        "Alzheimer's disease",
+        "Vascular dementia",
+        "Lewy body dementia",
+        "Frontotemporal dementia",
+        "Parkinson's disease dementia"
+      ],
+      "answerKey": "A",
+      "answerText": "Alzheimer's disease",
+      "explanation": "Alzheimer's disease is the leading etiology of neurocognitive disorders globally, accounting for an estimated 60% to 80% of all dementia cases.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is a potential risk factor for developing Alzheimer's disease?",
+      "options": [
+        "Regular exercise",
+        "High levels of education",
+        "Mediterranean diet",
+        "Family history of Alzheimer's disease",
+        "None of the above"
+      ],
+      "answerKey": "D",
+      "answerText": "Family history of Alzheimer's disease",
+      "explanation": "Family history and genetic factors (such as the Apolipoprotein E $\\epsilon4$ allele) elevate risk, whereas exercise, higher education, and a Mediterranean diet are protective factors.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "Which of the following is a behavioral and psychological symptom of dementia?",
+      "options": [
+        "Memory loss",
+        "Impaired judgment and decision-making",
+        "Visual hallucinations",
+        "Difficulty with language",
+        "None of the above"
+      ],
+      "answerKey": "C",
+      "answerText": "Visual hallucinations",
+      "explanation": "Memory, judgment, and language deficits are primary cognitive symptoms of neurocognitive decline, whereas hallucinations, delusions, anxiety, and aggression are classified under BPSD.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is the purpose of imaging studies in the diagnosis of dementia?",
+      "options": [
+        "To make a definitive diagnosis of dementia",
+        "To determine the type of dementia",
+        "To assess the severity of dementia",
+        "To rule out other conditions that can mimic dementia",
+        "To identify structural abnormalities in the brain"
+      ],
+      "answerKey": "D",
+      "answerText": "To rule out other conditions that can mimic dementia",
+      "explanation": "Structural neuroimaging (CT or MRI) is primarily used to exclude treatable secondary causes of cognitive decline, such as normal pressure hydrocephalus, chronic subdural hematomas, or intracranial masses.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "Which of the following is a potential non-pharmacological intervention for dementia?",
+      "options": [
+        "Antidepressant medication",
+        "Cholinesterase inhibitor",
+        "Physical exercise",
+        "Memantine",
+        "None of the above"
+      ],
+      "answerKey": "C",
+      "answerText": "Physical exercise",
+      "explanation": "Regular physical exercise improves cardiovascular health, preserves mobility, and helps slow the rate of functional decline in patients with mild-to-moderate dementia.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is the impact of dementia on society?",
+      "options": [
+        "Increased healthcare costs",
+        "Decreased productivity",
+        "Increased caregiver burden",
+        "All of the above",
+        "None of the above"
+      ],
+      "answerKey": "D",
+      "answerText": "All of the above",
+      "explanation": "Dementia imposes a massive public health burden, characterized by immense healthcare expenditures, loss of workforce productivity, and extensive physical, financial, and emotional toll on caregivers.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is the potential benefit of early diagnosis and intervention in dementia?",
+      "options": [
+        "Improved quality of life",
+        "Delayed disease progression",
+        "Reduced healthcare costs",
+        "All of the above",
+        "None of the above"
+      ],
+      "answerKey": "D",
+      "answerText": "All of the above",
+      "explanation": "Early identification allows for early initiation of symptomatic therapies, environmental planning, advance directive planning, and caregiver education, maximizing quality of life.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "Which of the following is a potential future treatment for dementia?",
+      "options": [
+        "Antibiotics",
+        "Chemotherapy",
+        "Immunotherapy",
+        "Radiation therapy",
+        "None of the above"
+      ],
+      "answerKey": "C",
+      "answerText": "Immunotherapy",
+      "explanation": "Modern disease-modifying therapies focus heavily on immunotherapeutic techniques, such as monoclonal antibodies (e.g., lecanemab) directed at clearing amyloid-beta plaques in early-stage Alzheimer’s disease.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is the role of caregiver support and education in dementia care?",
+      "options": [
+        "To provide respite care for caregivers",
+        "To improve access to care for individuals with dementia",
+        "To support and educate caregivers on how to provide optimal care",
+        "All of the above",
+        "None of the above"
+      ],
+      "answerKey": "D",
+      "answerText": "All of the above",
+      "explanation": "Supporting caregivers reduces burnout, delays institutionalization of patients, improves safe care delivery, and enhances outcomes for both the patient and the care provider.",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Dementia",
+      "question": "What is the most important factor affecting the prognosis of dementia?",
+      "options": [
+        "Age at onset",
+        "Severity of symptoms",
+        "Type of dementia",
+        "Presence of comorbidities",
+        "All of the above"
+      ],
+      "answerKey": "E",
+      "answerText": "All of the above",
+      "explanation": "Prognostic trajectory is multi-factorial, influenced heavily by the patient's age at onset, severity of symptoms, specific etiology of dementia, and concurrent medical comorbidities.\n\n---\n\n## 3. Schizophrenia I",
+      "tags": [
+        "dementia"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "A person who shows bizarre speech and disorganized behavior most likely has:",
+      "options": [
+        "Catatonic schizophrenia",
+        "Disorganized schizophrenia",
+        "Residual schizophrenia",
+        "Paranoid schizophrenia"
+      ],
+      "answerKey": "B",
+      "answerText": "Disorganized schizophrenia",
+      "explanation": "This subtype (historically termed hebephrenic) is characterized primarily by disorganized thought patterns, flat or inappropriate affect, and profoundly disorganized, non-goal-directed behavior.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Residual schizophrenia refers to a person who:",
+      "options": [
+        "Has never had schizophrenia symptoms",
+        "Currently has severe hallucinations",
+        "Has a past episode but currently no major symptoms",
+        "Only has disorganized speech"
+      ],
+      "answerKey": "C",
+      "answerText": "Has a past episode but currently no major symptoms",
+      "explanation": "Residual schizophrenia applies when a patient has a documented history of active schizophrenia but currently displays only mild, attenuated positive symptoms or predominantly negative symptoms (e.g., emotional blunting, avolition).",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Undifferentiated schizophrenia is diagnosed when:",
+      "options": [
+        "Symptoms are completely absent",
+        "Only hallucinations are present",
+        "A person fits two or more types of schizophrenia",
+        "The patient has movement problems only"
+      ],
+      "answerKey": "C",
+      "answerText": "A person fits two or more types of schizophrenia",
+      "explanation": "This diagnosis is applied when a patient meets the general diagnostic criteria for schizophrenia but their symptoms do not clearly conform to the paranoid, disorganized, or catatonic subtypes, or they exhibit features of more than one subtype.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Which type of schizophrenia is characterized mainly by delusions and auditory hallucinations?",
+      "options": [
+        "Residual schizophrenia",
+        "Catatonic schizophrenia",
+        "Paranoid schizophrenia",
+        "Disorganized schizophrenia"
+      ],
+      "answerKey": "C",
+      "answerText": "Paranoid schizophrenia",
+      "explanation": "Paranoid schizophrenia is classically dominated by persecutory or grandiose delusions and frequent auditory hallucinations, typically with relatively preserved cognitive and affective functioning.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "What is considered the first-line treatment for many patients with Schizophrenia?",
+      "options": [
+        "Antibiotics",
+        "Antipsychotics",
+        "Antidepressants",
+        "Sedatives"
+      ],
+      "answerKey": "B",
+      "answerText": "Antipsychotics",
+      "explanation": "Dopamine-receptor antagonists (atypical and typical antipsychotics) form the cornerstone of management to control positive symptoms, prevent relapse, and improve global functioning.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Which of the following is a low-potency typical neuroleptic?",
+      "options": [
+        "Haloperidol",
+        "Fluphenazine",
+        "Chlorpromazine",
+        "Diazepam"
+      ],
+      "answerKey": "C",
+      "answerText": "Chlorpromazine",
+      "explanation": "Chlorpromazine is a classic low-potency typical antipsychotic. It requires higher doses and has a high affinity for histaminergic, alpha-1 adrenergic, and muscarinic receptors, causing more sedation and hypotension than high-potency drugs like haloperidol.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Increased prolactin levels are especially associated with:",
+      "options": [
+        "Haloperidol",
+        "Fluphenazine",
+        "Sulpiride",
+        "Aspirin"
+      ],
+      "answerKey": "C",
+      "answerText": "Sulpiride",
+      "explanation": "Sulpiride (and other strong $D_2$ blockers like haloperidol and risperidone) blocks tuberoinfundibular dopamine pathways, removing the tonic dopaminergic inhibition on prolactin release and leading to hyperprolactinemia.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Which of the following is considered a positive symptom of schizophrenia?",
+      "options": [
+        "Avolition",
+        "Flat affect",
+        "Disorganized speech",
+        "Social isolation"
+      ],
+      "answerKey": "C",
+      "answerText": "Disorganized speech",
+      "explanation": "Positive symptoms represent an excess or distortion of normal functioning (e.g., hallucinations, delusions, disorganized speech). Avolition, flat affect, and social isolation are negative symptoms (deficits in normal function).",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Before diagnosing schizophrenia, which condition must be excluded?",
+      "options": [
+        "Hypertension",
+        "Schizoaffective disorder",
+        "Asthma",
+        "Migraine"
+      ],
+      "answerKey": "B",
+      "answerText": "Schizoaffective disorder",
+      "explanation": "Under DSM-5, a diagnosis of schizophrenia requires ruling out schizoaffective disorder and depressive or bipolar disorders with psychotic features by demonstrating that any mood episodes have occurred for only a minority of the active illness phase.",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_1",
+      "question": "Which symptom must be present among the required DSM-5 criteria of schizophrenia?",
+      "options": [
+        "Catatonia",
+        "Negative symptoms",
+        "Delusions, hallucinations, or disorganized speech",
+        "Social withdrawal"
+      ],
+      "answerKey": "C",
+      "answerText": "Delusions, hallucinations, or disorganized speech",
+      "explanation": "DSM-5 Criterion A requires at least two symptoms of psychosis, and at least one must be one of the \"core three\" positive symptoms: delusions, hallucinations, or disorganized speech.\n\n---\n\n## 4. Schizophrenia II",
+      "tags": [
+        "schizophrenia_1"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "The core feature of schizophrenia is:",
+      "options": [
+        "Mood disturbance",
+        "Disturbance in thought and perception",
+        "Memory loss",
+        "Loss of consciousness"
+      ],
+      "answerKey": "B",
+      "answerText": "Disturbance in thought and perception",
+      "explanation": "Schizophrenia is fundamentally characterized by a disintegration of thought processes, perception, reality testing, and executive functioning, distinguishing it from primary mood disorders.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "Which of the following is a positive symptom of schizophrenia?",
+      "options": [
+        "Flat affect",
+        "Social withdrawal",
+        "Hallucinations",
+        "Lack of motivation"
+      ],
+      "answerKey": "C",
+      "answerText": "Hallucinations",
+      "explanation": "Hallucinations are abnormal sensory experiences in the absence of external stimuli, representing a hallmark positive symptom. Flat affect, social withdrawal, and lack of motivation are negative symptoms.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "Which symptom is considered a negative symptom?",
+      "options": [
+        "Delusion",
+        "Auditory hallucination",
+        "Anhedonia",
+        "Disorganized speech"
+      ],
+      "answerKey": "C",
+      "answerText": "Anhedonia",
+      "explanation": "Anhedonia (the inability to experience pleasure) is a classic negative symptom, representing a deficit in normal emotional and motivational processing.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "The most common type of hallucination in schizophrenia is:",
+      "options": [
+        "Visual",
+        "Olfactory",
+        "Gustatory",
+        "Auditory"
+      ],
+      "answerKey": "D",
+      "answerText": "Auditory",
+      "explanation": "Auditory hallucinations—such as voices commenting on the patient's behavior or talking to one another—are the most prevalent modality in schizophrenia. Visual, tactile, and olfactory hallucinations are less common and often prompt evaluation for organic etiologies.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "A patient believes that strangers are trying to harm him. This is:",
+      "options": [
+        "Grandiose delusion",
+        "Nihilistic delusion",
+        "Persecutory delusion",
+        "Somatic delusion"
+      ],
+      "answerKey": "C",
+      "answerText": "Persecutory delusion",
+      "explanation": "Delusions of persecution involve the fixed, false belief that one is being targeted, harassed, cheated, or conspired against by external forces or individuals.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "Minimum duration required for diagnosis of schizophrenia according to DSM-5:",
+      "options": [
+        "1 week",
+        "1 month",
+        "3 months",
+        "6 months"
+      ],
+      "answerKey": "D",
+      "answerText": "6 months",
+      "explanation": "DSM-5 requires continuous signs of disturbance for at least 6 months, which must include at least 1 month of active-phase symptoms (or less if successfully treated). If the duration is between 1 and 6 months, the diagnosis is schizophreniform disorder.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "Which neurotransmitter is most associated with schizophrenia?",
+      "options": [
+        "Serotonin",
+        "Dopamine",
+        "Acetylcholine",
+        "GABA"
+      ],
+      "answerKey": "B",
+      "answerText": "Dopamine",
+      "explanation": "The dopamine hypothesis of schizophrenia posits that hyperactive dopaminergic transmission in the mesolimbic pathway underlies positive symptoms, while hypoactive dopamine in the mesocortical pathway contributes to negative and cognitive symptoms.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "First-line treatment for schizophrenia is:",
+      "options": [
+        "Benzodiazepines",
+        "Antidepressants",
+        "Antipsychotics",
+        "Mood stabilizers"
+      ],
+      "answerKey": "C",
+      "answerText": "Antipsychotics",
+      "explanation": "Antipsychotics (especially second-generation/atypical antipsychotics due to their lower extrapyramidal side-effect profile) are the gold-standard initial pharmacotherapy.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "Which antipsychotic has a risk of agranulocytosis?",
+      "options": [
+        "Haloperidol",
+        "Risperidone",
+        "Clozapine",
+        "Olanzapine"
+      ],
+      "answerKey": "C",
+      "answerText": "Clozapine",
+      "explanation": "Clozapine carries a life-threatening risk of agranulocytosis (severe neutropenia) in approximately 1% of patients, requiring strict, mandatory absolute neutrophil count (ANC) monitoring.",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Schizophrenia_2",
+      "question": "Extrapyramidal side effects are more common with:",
+      "options": [
+        "Typical antipsychotics",
+        "Atypical antipsychotics",
+        "SSRIs",
+        "TCAs"
+      ],
+      "answerKey": "A",
+      "answerText": "Typical antipsychotics",
+      "explanation": "First-generation (typical) antipsychotics have a high affinity and tight binding to dopamine $D_2$ receptors in the nigrostriatal pathway, leading to a significantly higher incidence of movement disorders (dystonia, akathisia, parkinsonism, and tardive dyskinesia).\n\n---\n\n## 5. Autism",
+      "tags": [
+        "schizophrenia_2"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Autism Spectrum Disorder is primarily a:",
+      "options": [
+        "Learning disability",
+        "Neurodevelopmental disorder",
+        "Mood disorder",
+        "Behavioral disorder"
+      ],
+      "answerKey": "B",
+      "answerText": "Neurodevelopmental disorder",
+      "explanation": "Autism Spectrum Disorder (ASD) is classified as a neurodevelopmental disorder because its symptoms arise early in development and reflect underlying atypical brain maturation and synaptic pruning.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Which of the following is a core symptom of autism spectrum disorder?",
+      "options": [
+        "Excessive talking without pause",
+        "Difficulty with social communication and interaction",
+        "Frequent headaches",
+        "Loss of motor skills"
+      ],
+      "answerKey": "B",
+      "answerText": "Difficulty with social communication and interaction",
+      "explanation": "Under DSM-5, ASD is characterized by two core symptom domains: (1) persistent deficits in social communication and social interaction, and (2) restricted, repetitive patterns of behavior, interests, or activities.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "The term \"spectrum\" in Autism Spectrum Disorder refers to:",
+      "options": [
+        "The range of ages when autism appears",
+        "The variety in types and severity of symptoms",
+        "The number of genetic mutations involved",
+        "The different colors used in awareness ribbons"
+      ],
+      "answerKey": "B",
+      "answerText": "The variety in types and severity of symptoms",
+      "explanation": "The term \"spectrum\" emphasizes that the clinical presentation, level of cognitive and linguistic capability, and functional impairment vary widely from one individual to another.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Which of the following is an example of restricted or repetitive behavior in autism?",
+      "options": [
+        "Making strong eye contact",
+        "Lining up toys in a fixed order repeatedly",
+        "Changing daily routine without distress",
+        "Enjoying a wide variety of foods"
+      ],
+      "answerKey": "B",
+      "answerText": "Lining up toys in a fixed order repeatedly",
+      "explanation": "This behavior demonstrates the insistence on sameness, rigid routines, and repetitive sensorimotor patterns characteristic of the second diagnostic domain of ASD.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Autism can usually be reliably diagnosed by age:",
+      "options": [
+        "1 month",
+        "2 years",
+        "10 years",
+        "18 years"
+      ],
+      "answerKey": "B",
+      "answerText": "2 years",
+      "explanation": "While subtle developmental delays may be noticed earlier, clinical diagnostic assessments (such as the ADOS-2) administered around age 2 possess high stability and diagnostic reliability.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Which gender is statistically more likely to be diagnosed with autism?",
+      "options": [
+        "Males",
+        "Females",
+        "Equal in both",
+        "Only children assigned male at birth"
+      ],
+      "answerKey": "A",
+      "answerText": "Males",
+      "explanation": "Epidemiological data show that ASD is diagnosed approximately 4 times more frequently in males than in females, though ongoing research suggests females may be underdiagnosed due to different symptom presentation (\"masking\").",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Which of the following is NOT a sign of autism in young children?",
+      "options": [
+        "Not responding to their name by 12 months",
+        "Avoiding eye contact",
+        "Pretend play (e.g., feeding a doll) by 18 months",
+        "Delayed speech development"
+      ],
+      "answerKey": "C",
+      "answerText": "Pretend play (e.g., feeding a doll) by 18 months",
+      "explanation": "Engaging in age-appropriate pretend (symbolic) play by 18 months is a healthy developmental milestone. A delay or absence of pretend play is a warning sign of ASD.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Is there a cure for Autism Spectrum Disorder?",
+      "options": [
+        "Yes, with medication",
+        "Yes, with behavioral therapy",
+        "No, but early intervention can help development",
+        "No, and no treatments are available"
+      ],
+      "answerKey": "C",
+      "answerText": "No, but early intervention can help development",
+      "explanation": "ASD is a lifelong neurodevelopmental variation. There is no \"cure,\" but structured early behavioral interventions (such as Applied Behavior Analysis, speech, and occupational therapies) significantly improve adaptive skills and functional outcomes.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Which professional is most qualified to diagnose autism?",
+      "options": [
+        "General physician",
+        "Dentist",
+        "Developmental pediatrician or child psychologist",
+        "Physical therapist"
+      ],
+      "answerKey": "C",
+      "answerText": "Developmental pediatrician or child psychologist",
+      "explanation": "Confirming an ASD diagnosis requires specialized training in developmental milestones and standardized diagnostic instruments, typically performed by child psychologists, developmental pediatricians, or child psychiatrists.",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Autism",
+      "question": "Many individuals with autism have:",
+      "options": [
+        "Below average intelligence in all cases",
+        "Superior athletic ability",
+        "Strengths such as pattern recognition or attention to detail",
+        "No sensory sensitivities"
+      ],
+      "answerKey": "C",
+      "answerText": "Strengths such as pattern recognition or attention to detail",
+      "explanation": "ASD is associated with cognitive strengths, including heightened attention to detail, strong pattern recognition, rote memory, and deep focus on specialized areas of interest.\n\n---\n\n## 6. Disorders Associated with Stress",
+      "tags": [
+        "autism"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "Which disorder is linked to a recent traumatic event?",
+      "options": [
+        "Acute Stress Disorder",
+        "Obsessive Compulsive Disorder",
+        "Schizophrenia",
+        "Eating Disorder"
+      ],
+      "answerKey": "A",
+      "answerText": "Acute Stress Disorder",
+      "explanation": "Acute Stress Disorder (ASD) is directly precipitated by exposure to actual or threatened death, serious injury, or sexual violence, with symptoms developing and resolving within 1 month of the trauma.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "What is the main feature of PTSD?",
+      "options": [
+        "Re-experiencing trauma",
+        "Fear of open spaces",
+        "Obsessive hand washing",
+        "Loss of appetite only"
+      ],
+      "answerKey": "A",
+      "answerText": "Re-experiencing trauma",
+      "explanation": "The hallmark of Post-Traumatic Stress Disorder (PTSD) is the involuntary intrusion of the traumatic event through flashbacks, nightmares, or intense physiological distress upon exposure to trauma reminders.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "Which age group is most prevalent for PTSD?",
+      "options": [
+        "Children",
+        "Adolescents",
+        "young adults",
+        "Elderly"
+      ],
+      "answerKey": "C",
+      "answerText": "young adults",
+      "explanation": "Epidemiologically, young adults exhibit the highest prevalence rates of PTSD, largely due to higher baseline exposure rates to traumatic events such as physical assaults, combat, and motor vehicle accidents.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "In Adjustment Disorder, the stressor is:",
+      "options": [
+        "Life-threatening trauma only",
+        "Any identifiable psychosocial stressor",
+        "Childhood abuse only",
+        "No stressor needed"
+      ],
+      "answerKey": "B",
+      "answerText": "Any identifiable psychosocial stressor",
+      "explanation": "Unlike PTSD/ASD, which require life-threatening trauma, Adjustment Disorder can be triggered by any common life stressor (e.g., divorce, job loss, relocation), and involves distress out of proportion to the severity of the stressor.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "Flashbacks and nightmares are core symptoms of:",
+      "options": [
+        "Panic Disorder",
+        "PTSD",
+        "OCD",
+        "Major Depressive Disorder"
+      ],
+      "answerKey": "B",
+      "answerText": "PTSD",
+      "explanation": "These are classic intrusive symptoms (Criterion B of PTSD) representing the brain's involuntary re-experiencing of the traumatic memory.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "Which is NOT a DSM-5 criterion cluster for PTSD?",
+      "options": [
+        "Intrusion",
+        "Avoidance",
+        "Negative alterations in cognition",
+        "Hallucinations"
+      ],
+      "answerKey": "D",
+      "answerText": "Hallucinations",
+      "explanation": "The four diagnostic clusters for PTSD under DSM-5 are: (1) Intrusion symptoms, (2) Avoidance of stimuli, (3) Negative alterations in cognitions and mood, and (4) Alterations in arousal and reactivity. Hallucinations are a feature of psychotic disorders, not a core cluster for PTSD.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "A common first-line treatment for PTSD is:",
+      "options": [
+        "ECT",
+        "Trauma-focused CBT",
+        "Lithium",
+        "Anticholinergics"
+      ],
+      "answerKey": "B",
+      "answerText": "Trauma-focused CBT",
+      "explanation": "Evidence-based psychotherapies, specifically trauma-focused Cognitive Behavioral Therapy (CBT), Prolonged Exposure (PE), and Eye Movement Desensitization and Reprocessing (EMDR), are first-line treatments for PTSD.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "Acute Stress Disorder differs from PTSD mainly in:",
+      "options": [
+        "The type of trauma",
+        "The duration of symptoms",
+        "The need for medication",
+        "The age of onset"
+      ],
+      "answerKey": "B",
+      "answerText": "The duration of symptoms",
+      "explanation": "Symptoms of Acute Stress Disorder must persist for at least 3 days and resolve within 1 month of the trauma. If symptoms persist beyond 1 month, the diagnosis changes to PTSD.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "Hypervigilance and exaggerated startle response fall under which PTSD cluster?",
+      "options": [
+        "Intrusion",
+        "Avoidance",
+        "Alterations in arousal and reactivity",
+        "Negative mood"
+      ],
+      "answerKey": "C",
+      "answerText": "Alterations in arousal and reactivity",
+      "explanation": "This cluster (Criterion E) encompasses symptoms of autonomic hyperarousal, including irritability, hypervigilance, concentration deficits, sleep disturbances, and an exaggerated startle reflex.",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Disorders_With_Stress",
+      "question": "If symptoms are resolved quickly after trauma, the most likely diagnosis is:",
+      "options": [
+        "PTSD",
+        "Acute Stress Disorder",
+        "Normal stress response",
+        "Adjustment Disorder"
+      ],
+      "answerKey": "B",
+      "answerText": "Acute Stress Disorder",
+      "explanation": "When clinically significant post-traumatic symptoms develop and resolve within 1 month of a traumatic event, the diagnosis is Acute Stress Disorder.\n\n---\n\n## 7. Depression",
+      "tags": [
+        "disorders_with_stress"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "Depression is primarily classified as a:",
+      "options": [
+        "Personality disorder",
+        "Mood disorder",
+        "Psychotic disorder",
+        "Anxiety disorder"
+      ],
+      "answerKey": "B",
+      "answerText": "Mood disorder",
+      "explanation": "Major Depressive Disorder (MDD) is a primary affective or mood disorder characterized by a sustained disturbance of emotional tone.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "Which of the following is not a common symptom of depression?",
+      "options": [
+        "Persistent sadness",
+        "Increased appetite",
+        "Loss of interest in activities",
+        "Fatigue and decreased energy"
+      ],
+      "answerKey": "B",
+      "answerText": "Increased appetite",
+      "explanation": "While \"atypical depression\" can present with hyperphagia (increased appetite), the classic somatic presentation of Major Depressive Disorder involves a *decrease* in appetite and corresponding weight loss.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "Which neurotransmitter is commonly associated with depression?",
+      "options": [
+        "Dopamine",
+        "Serotonin",
+        "Histamine",
+        "Acetylcholine"
+      ],
+      "answerKey": "B",
+      "answerText": "Serotonin",
+      "explanation": "The monoamine hypothesis of depression focuses on deficient synaptic serotonin (5-HT), norepinephrine, and dopamine, which is why Selective Serotonin Reuptake Inhibitors (SSRIs) are effective.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "The minimum duration for diagnosis of major depression is:",
+      "options": [
+        "2 days",
+        "1 week",
+        "2 weeks",
+        "1 month"
+      ],
+      "answerKey": "C",
+      "answerText": "2 weeks",
+      "explanation": "To meet the DSM-5 diagnostic criteria for Major Depressive Episode, the patient must experience at least five depressive symptoms (including depressed mood or anhedonia) for a continuous period of at least 2 weeks.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "One of the biological symptoms of depression is:",
+      "options": [
+        "Increased appetite in all cases",
+        "Sleep disturbance",
+        "Excessive talking",
+        "Hallucinations"
+      ],
+      "answerKey": "B",
+      "answerText": "Sleep disturbance",
+      "explanation": "Sleep disturbance—most commonly early morning awakening (terminal insomnia) or hypersomnia—is a classic vegetative/biological symptom of MDD.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "First-line treatment for depression is:",
+      "options": [
+        "Antibiotics",
+        "SSRIs",
+        "Antipsychotics",
+        "Benzodiazepines"
+      ],
+      "answerKey": "B",
+      "answerText": "SSRIs",
+      "explanation": "Selective Serotonin Reuptake Inhibitors (SSRIs) are first-line pharmacotherapy for MDD due to their favorable safety profile, ease of dosing, and tolerability compared to older tricyclic antidepressants (TCAs) or monoamine oxidase inhibitors (MAOIs).",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "Suicidal thoughts in depression are considered:",
+      "options": [
+        "Normal behavior",
+        "A serious warning sign",
+        "Rarely important",
+        "Always attention-seeking"
+      ],
+      "answerKey": "B",
+      "answerText": "A serious warning sign",
+      "explanation": "Suicidal ideation is a core criterion of major depression and requires immediate, thorough clinical safety assessments and intervention planning.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "A cognitive symptom of depression is:",
+      "options": [
+        "Increased confidence",
+        "Poor concentration",
+        "Hyperactivity",
+        "Euphoria"
+      ],
+      "answerKey": "B",
+      "answerText": "Poor concentration",
+      "explanation": "Cognitive symptoms of depression include slowed processing, indecisiveness, and poor focus/concentration. Confident demeanor or hyperactivity represent manic or healthy states.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "Severe depression with suicidal ideation may require:",
+      "options": [
+        "Home rest only",
+        "Hospital admission",
+        "No treatment",
+        "Vitamins only"
+      ],
+      "answerKey": "B",
+      "answerText": "Hospital admission",
+      "explanation": "Patients presenting with severe depression accompanied by active suicidal intent, plans, or access to means require inpatient psychiatric hospitalization to ensure patient safety.",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Depression",
+      "question": "Electro-Convulsive Therapy (ECT) is mainly indicated in:",
+      "options": [
+        "Mild depression",
+        "Severe resistant depression",
+        "Simple anxiety",
+        "Insomnia"
+      ],
+      "answerKey": "B",
+      "answerText": "Severe resistant depression",
+      "explanation": "ECT is a highly effective acute treatment indicated for severe major depressive disorder that is refractory to pharmacological treatments, or when rapid clinical response is life-saving (e.g., severe catatonia or active starvation).\n\n---\n\n## 8. Bipolar Disorder",
+      "tags": [
+        "depression"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "A 25-year-old man presents with a one-week history of elevated mood, decreased need for sleep, increased talkativeness, and excessive spending. He has significant impairment in social functioning. Which of the following is the most likely diagnosis?",
+      "options": [
+        "Cyclothymic disorder",
+        "Hypomanic episode",
+        "Manic episode",
+        "Major depressive disorder"
+      ],
+      "answerKey": "C",
+      "answerText": "Manic episode",
+      "explanation": "A manic episode is defined by a distinct period of abnormally elevated, expansive, or irritable mood lasting at least 1 week, accompanied by functional impairment or requiring hospitalization.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "Which neurotransmitter abnormality is most commonly associated with bipolar disorder?",
+      "options": [
+        "Decreased dopamine activity only",
+        "Increased dopamine and norepinephrine activity",
+        "Decreased serotonin only",
+        "Increased GABA activity"
+      ],
+      "answerKey": "B",
+      "answerText": "Increased dopamine and norepinephrine activity",
+      "explanation": "Manic phases are associated with functional hyper-dopaminergic and hyper-noradrenergic states, whereas depressive phases are linked to monoaminergic deficits.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "A patient with bipolar disorder develops tremors, polyuria, and hypothyroidism during treatment. Which drug is the most likely cause?",
+      "options": [
+        "Fluoxetine",
+        "Haloperidol",
+        "Lithium",
+        "Alprazolam"
+      ],
+      "answerKey": "C",
+      "answerText": "Lithium",
+      "explanation": "Lithium has a narrow therapeutic index and is associated with classic long-term adverse effects, including fine tremors, nephrogenic diabetes insipidus (polyuria/polydipsia), and drug-induced hypothyroidism.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "Which of the following features helps distinguish mania from hypomania?",
+      "options": [
+        "Presence of elevated mood",
+        "Increased energy",
+        "Presence of marked functional impairment or psychosis",
+        "Decreased need for sleep"
+      ],
+      "answerKey": "C",
+      "answerText": "Presence of marked functional impairment or psychosis",
+      "explanation": "Hypomania does *not* cause marked impairment in social or occupational functioning, does not require hospitalization, and never features psychotic symptoms. The presence of any of these elements immediately upgrades the diagnosis to a manic episode.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "A 30-year-old woman with bipolar disorder presents with depressed mood alternating with episodes of mania. Which type of bipolar disorder is most likely?",
+      "options": [
+        "Bipolar I disorder",
+        "Bipolar II disorder",
+        "Cyclothymic disorder",
+        "Persistent depressive disorder"
+      ],
+      "answerKey": "A",
+      "answerText": "Bipolar I disorder",
+      "explanation": "The diagnostic requirement for Bipolar I disorder is at least one lifetime manic episode. The occurrence of major depressive episodes is common but not strictly required for diagnosis. Bipolar II requires a hypomanic episode *and* a depressive episode, with no history of mania.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "Which of the following is considered a first-line mood stabilizer in bipolar disorder?",
+      "options": [
+        "Diazepam",
+        "Lithium",
+        "Sertraline",
+        "Chlorpromazine"
+      ],
+      "answerKey": "B",
+      "answerText": "Lithium",
+      "explanation": "Lithium remains a gold-standard, first-line maintenance therapy for Bipolar Disorder, with proven efficacy in preventing both manic and depressive relapses, and reducing suicide risk.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "A patient with bipolar disorder is brought to the emergency department with severe agitation and aggressive behavior during a manic episode. What is the most appropriate immediate management?",
+      "options": [
+        "Psychoanalysis",
+        "Antidepressant monotherapy",
+        "Hospitalization and mood stabilizer/antipsychotic treatment",
+        "Observation only"
+      ],
+      "answerKey": "C",
+      "answerText": "Hospitalization and mood stabilizer/antipsychotic treatment",
+      "explanation": "Acute manic agitation requires inpatient hospitalization to ensure safety, alongside rapid-acting medications, typically a combination of a mood stabilizer (e.g., lithium or valproate) and an atypical antipsychotic (e.g., olanzapine or haloperidol) for rapid behavioral control.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "Which of the following statements about bipolar disorder is TRUE?",
+      "options": [
+        "Bipolar II disorder includes full manic episodes",
+        "Mania must last at least one month for diagnosis",
+        "Bipolar disorder has a strong genetic association",
+        "Depression never occurs in bipolar disorder"
+      ],
+      "answerKey": "C",
+      "answerText": "Bipolar disorder has a strong genetic association",
+      "explanation": "Bipolar disorder has one of the highest heritability rates among psychiatric conditions, with twin studies estimating its heritability at roughly 70% to 80%.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "A patient treated with lithium develops toxicity. Which serum lithium level is most likely associated with severe toxicity?",
+      "options": [
+        "0.4 mEq/L",
+        "0.8 mEq/L",
+        "1.0 mEq/L",
+        ">2.0 mEq/L"
+      ],
+      "answerKey": "D",
+      "answerText": ">2.0 mEq/L",
+      "explanation": "The standard therapeutic range for lithium is 0.6–1.2 mEq/L. Levels above 1.5 mEq/L cause mild-to-moderate toxicity, while levels exceeding 2.0 mEq/L represent severe, potentially life-threatening toxicity characterized by neurological deficits, cardiac arrhythmias, and renal failure.",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Bipolar_Disorder",
+      "question": "Which of the following medications may precipitate mania in a patient with bipolar disorder?",
+      "options": [
+        "Antidepressants",
+        "Antacids",
+        "Antihistamines",
+        "Proton pump inhibitors"
+      ],
+      "answerKey": "A",
+      "answerText": "Antidepressants",
+      "explanation": "Antidepressant monotherapy (especially with tricyclics or venlafaxine) carries a significant risk of inducing a \"manic switch\" in patients with bipolar vulnerability. They should generally be paired with a mood stabilizer.\n\n---\n\n## 9. Anxiety Disorders",
+      "tags": [
+        "bipolar_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Which neurotransmitter is most commonly associated with anxiety disorders?",
+      "options": [
+        "Dopamine",
+        "Serotonin",
+        "Histamine",
+        "Acetylcholine"
+      ],
+      "answerKey": "B",
+      "answerText": "Serotonin",
+      "explanation": "Serotonin, along with GABA and norepinephrine, regulates fear and anxiety pathways. The clinical efficacy of SSRIs in long-term treatment underscores the primary role of serotonin.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "A patient experiences sudden episodes of intense fear with palpitations, sweating, and shortness of breath. The most likely diagnosis is:",
+      "options": [
+        "Panic disorder",
+        "Schizophrenia",
+        "Bipolar disorder",
+        "Dementia"
+      ],
+      "answerKey": "A",
+      "answerText": "Panic disorder",
+      "explanation": "These acute, discrete episodes of autonomic hyperarousal represent panic attacks. Recurrent, unexpected panic attacks followed by persistent worry about future attacks define Panic Disorder.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Generalized anxiety disorder (GAD) is characterized by excessive anxiety lasting for at least:",
+      "options": [
+        "1 week",
+        "1 month",
+        "6 months",
+        "2 years"
+      ],
+      "answerKey": "C",
+      "answerText": "6 months",
+      "explanation": "To meet DSM-5 diagnostic criteria for GAD, the patient must experience excessive, difficult-to-control worry about several events or activities for the majority of days over at least a 6-month period.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Which medication is commonly used for acute anxiety symptoms?",
+      "options": [
+        "Diazepam",
+        "Lithium",
+        "Haloperidol",
+        "Carbamazepine"
+      ],
+      "answerKey": "A",
+      "answerText": "Diazepam",
+      "explanation": "Benzodiazepines like diazepam act as positive allosteric modulators of the $GABA_A$ receptor, enhancing inhibitory neurotransmission to provide rapid-onset relief of acute anxiety or panic.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Which psychotherapy is considered first-line treatment for many anxiety disorders?",
+      "options": [
+        "Electroconvulsive therapy",
+        "Cognitive behavioral therapy",
+        "Psychoanalysis only",
+        "Sleep therapy"
+      ],
+      "answerKey": "B",
+      "answerText": "Cognitive behavioral therapy",
+      "explanation": "Cognitive Behavioral Therapy (CBT) has the strongest evidence base for long-term recovery in anxiety disorders, focusing on identifying cognitive distortions and implementing exposure-based behavioral strategies.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "A patient avoids social situations due to fear of embarrassment. This is most consistent with:",
+      "options": [
+        "Panic disorder",
+        "Obsessive-compulsive disorder",
+        "Social anxiety disorder",
+        "Delirium"
+      ],
+      "answerKey": "C",
+      "answerText": "Social anxiety disorder",
+      "explanation": "Social Anxiety Disorder (formerly social phobia) is characterized by an intense, persistent fear of social or performance situations where the individual may be scrutinized, embarrassed, or negatively evaluated by others.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Which physical symptom is commonly associated with anxiety?",
+      "options": [
+        "Bradycardia",
+        "Tremor",
+        "Hypothermia",
+        "Paralysis"
+      ],
+      "answerKey": "B",
+      "answerText": "Tremor",
+      "explanation": "Autonomic nervous system activation during anxiety states leads to physical symptoms including tremors, tachycardia, diaphoresis, pupillary dilation, and tachypnea.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Obsessions in obsessive-compulsive disorder (OCD) are:",
+      "options": [
+        "Voluntary pleasant thoughts",
+        "Intrusive unwanted thoughts",
+        "Loss of consciousness",
+        "False memories only"
+      ],
+      "answerKey": "B",
+      "answerText": "Intrusive unwanted thoughts",
+      "explanation": "Obsessions are defined as recurrent, persistent, intrusive, and unwanted thoughts, urges, or images that cause marked anxiety or distress, and are recognized by the patient as products of their own mind.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "A patient repeatedly washes his hands due to fear of contamination despite knowing the fear is excessive. This behavior is called:",
+      "options": [
+        "Delusion",
+        "Compulsion",
+        "Hallucination",
+        "Phobia"
+      ],
+      "answerKey": "B",
+      "answerText": "Compulsion",
+      "explanation": "Compulsions are repetitive physical behaviors or mental acts that an individual feels driven to perform in response to an obsession, or according to rigid rules, to reduce distress or prevent a dreaded event.",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Anxiety_Disorders",
+      "question": "Which statement about panic attacks is TRUE?",
+      "options": [
+        "They always occur during sleep",
+        "They may occur unexpectedly",
+        "They last several days continuously",
+        "They are caused only by cardiac disease"
+      ],
+      "answerKey": "B",
+      "answerText": "They may occur unexpectedly",
+      "explanation": "Panic attacks can occur in a expected fashion (triggered by a phobic stimulus) or unexpectedly, arising \"out of the blue\" without an obvious cue.\n\n---\n\n## 10. Panic Disorder",
+      "tags": [
+        "anxiety_disorders"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "A patient suddenly develops palpitations, sweating, trembling, and fear of dying for 15 minutes. What is the most likely diagnosis?",
+      "options": [
+        "Major depressive disorder",
+        "Panic attack",
+        "Schizophrenia",
+        "OCD"
+      ],
+      "answerKey": "B",
+      "answerText": "Panic attack",
+      "explanation": "A panic attack is an abrupt surge of intense fear or discomfort that reaches a peak within minutes and is accompanied by somatic symptoms (palpitations, trembling, dyspnea) and cognitive symptoms (fear of dying, fear of losing control).",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Which neurotransmitter is most commonly linked to panic disorder?",
+      "options": [
+        "Dopamine",
+        "Acetylcholine",
+        "Serotonin",
+        "Histamine"
+      ],
+      "answerKey": "C",
+      "answerText": "Serotonin",
+      "explanation": "Alterations in serotonin and norepinephrine pathways within the locus coeruleus and amygdala are central to panic pathophysiology. SSRIs are highly effective in stabilizing these networks.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Which symptom is commonly seen during a panic attack?",
+      "options": [
+        "Bradycardia",
+        "Chest tightness",
+        "Jaundice",
+        "Hematuria"
+      ],
+      "answerKey": "B",
+      "answerText": "Chest tightness",
+      "explanation": "Somatic symptoms of hyperventilation and sympathetic activation during a panic attack frequently present as chest tightness, dyspnea, and paresthesias, often mimicking acute coronary syndrome.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Panic disorder is diagnosed when panic attacks are:",
+      "options": [
+        "Always triggered by trauma",
+        "Unexpected and recurrent",
+        "Only during sleep",
+        "Due to substance use only"
+      ],
+      "answerKey": "B",
+      "answerText": "Unexpected and recurrent",
+      "explanation": "The core diagnosis of Panic Disorder requires recurrent, unexpected panic attacks, coupled with at least 1 month of persistent worry about having additional attacks or maladaptive behavioral changes to avoid them.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Which age group most commonly develops panic disorder?",
+      "options": [
+        "Childhood",
+        "Elderly",
+        "Young adults",
+        "Neonates"
+      ],
+      "answerKey": "C",
+      "answerText": "Young adults",
+      "explanation": "The onset of panic disorder typically peaks in late adolescence and early adulthood (mid-20s), with a secondary smaller peak in early middle age.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Which of the following is considered first-line treatment for panic disorder?",
+      "options": [
+        "SSRIs",
+        "Antibiotics",
+        "Antipsychotics only",
+        "Steroids"
+      ],
+      "answerKey": "A",
+      "answerText": "SSRIs",
+      "explanation": "SSRIs are the first-line pharmacotherapy for long-term management of panic disorder due to their efficacy in reducing the frequency and intensity of panic attacks and associated anticipatory anxiety.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Which psychological therapy is useful in panic disorder?",
+      "options": [
+        "CBT",
+        "Psychoanalysis only",
+        "Electroconvulsive therapy",
+        "Hypnosis only"
+      ],
+      "answerKey": "A",
+      "answerText": "CBT",
+      "explanation": "Cognitive Behavioral Therapy (CBT)—specifically incorporating interoceptive exposure (exposing the patient to feared bodily sensations like high heart rate)—is highly effective in desensitizing patients to panic triggers.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "A patient avoids crowded places due to fear of panic attacks. This is called:",
+      "options": [
+        "Agoraphobia",
+        "Claustrophobia",
+        "Delirium",
+        "Mania"
+      ],
+      "answerKey": "A",
+      "answerText": "Agoraphobia",
+      "explanation": "Agoraphobia is the intense fear or avoidance of situations (like crowds, public transit, or open spaces) where escape might be difficult or help unavailable in the event of developing panic-like or embarrassing symptoms.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Which physical disease should be excluded before diagnosing panic disorder?",
+      "options": [
+        "Hyperthyroidism",
+        "Osteoarthritis",
+        "Cataract",
+        "Psoriasis"
+      ],
+      "answerKey": "A",
+      "answerText": "Hyperthyroidism",
+      "explanation": "Hyperthyroidism is a critical organic mimic of panic disorder, presenting with matching adrenergic symptoms such as palpitations, tremors, diaphoresis, weight loss, and anxiety.",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Panic_disorder",
+      "question": "Panic attacks usually reach peak intensity within:",
+      "options": [
+        "Few seconds to minutes",
+        "24 hours",
+        "One week",
+        "One month"
+      ],
+      "answerKey": "A",
+      "answerText": "Few seconds to minutes",
+      "explanation": "Classically, a panic attack develops abruptly and reaches its maximal clinical intensity within 10 minutes, lasting generally around 20 to 30 minutes in total.\n\n---\n\n## 11. Specific Phobia & Social Anxiety Disorder",
+      "tags": [
+        "panic_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "Specific phobia is characterized by:",
+      "options": [
+        "Fear of all social situations",
+        "Persistent irrational fear of a specific object or situation",
+        "Mood elevation",
+        "Memory impairment"
+      ],
+      "answerKey": "B",
+      "answerText": "Persistent irrational fear of a specific object or situation",
+      "explanation": "A specific phobia is defined as marked, disproportionate fear or anxiety about a specific object or situation (e.g., flying, heights, animals, receiving an injection).",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "A patient has intense fear whenever he sees blood and avoids hospitals. The most likely diagnosis is:",
+      "options": [
+        "Panic disorder",
+        "Specific phobia",
+        "Schizophrenia",
+        "Obsessive-compulsive disorder"
+      ],
+      "answerKey": "B",
+      "answerText": "Specific phobia",
+      "explanation": "This represents Blood-Injury-Injection (BII) phobia, a unique specific phobia characterized by a biphasic vasovagal response (initial tachycardia followed by bradycardia and hypotension, often leading to syncope).",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "Social anxiety disorder is mainly characterized by fear of:",
+      "options": [
+        "Open spaces",
+        "Being negatively evaluated by others",
+        "Dark places",
+        "Losing memory"
+      ],
+      "answerKey": "B",
+      "answerText": "Being negatively evaluated by others",
+      "explanation": "The core cognitive driver of Social Anxiety Disorder is the persistent fear of acting in a way, or showing anxiety symptoms, that will be negatively evaluated, humiliated, or rejected by others.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "Which physical symptom is commonly seen during phobic anxiety?",
+      "options": [
+        "Bradycardia",
+        "Sweating and palpitations",
+        "Paralysis",
+        "Jaundice"
+      ],
+      "answerKey": "B",
+      "answerText": "Sweating and palpitations",
+      "explanation": "Exposure to the phobic stimulus triggers a classic fight-or-flight sympathetic nervous system cascade, resulting in acute sweating, palpitations, pupillary dilation, and tachypnea.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "The first-line psychotherapy for specific phobia is:",
+      "options": [
+        "Electroconvulsive therapy",
+        "Exposure therapy",
+        "Psychoanalysis only",
+        "Sleep therapy"
+      ],
+      "answerKey": "B",
+      "answerText": "Exposure therapy",
+      "explanation": "Systematically exposing the patient to the feared object/situation in a controlled, gradual manner (systematic desensitization or flooding) is the single most effective treatment for specific phobias.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "A university student avoids presentations because of fear of embarrassment and criticism. This is most consistent with:",
+      "options": [
+        "Specific phobia",
+        "Social anxiety disorder",
+        "Delirium",
+        "Bipolar disorder"
+      ],
+      "answerKey": "B",
+      "answerText": "Social anxiety disorder",
+      "explanation": "Performance-only or generalized avoidance of public speaking due to intense fears of negative judgment and humiliation is a classic presentation of Social Anxiety Disorder.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "Which medication class is commonly used in social anxiety disorder?",
+      "options": [
+        "SSRIs",
+        "Antibiotics",
+        "Mood stabilizers",
+        "Anticonvulsants only"
+      ],
+      "answerKey": "A",
+      "answerText": "SSRIs",
+      "explanation": "SSRIs (and SNRIs) are the first-line pharmacotherapy for generalized social anxiety disorder. For performance-only anxiety, beta-blockers (such as propranolol) can be used as-needed to control physical adrenergic symptoms.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "A patient with arachnophobia is afraid of:",
+      "options": [
+        "Dogs",
+        "Spiders",
+        "Heights",
+        "Water"
+      ],
+      "answerKey": "B",
+      "answerText": "Spiders",
+      "explanation": "Arachnophobia is the specific, irrational fear of spiders and other arachnids.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "Which statement about specific phobia is TRUE?",
+      "options": [
+        "Patients recognize that the fear is excessive",
+        "It always causes psychosis",
+        "It is associated with dementia",
+        "It occurs only in children"
+      ],
+      "answerKey": "A",
+      "answerText": "Patients recognize that the fear is excessive",
+      "explanation": "In adults, specific phobias are typically egodystonic; the patient possesses insight and recognizes that their level of fear is disproportionate to the actual danger posed by the object or situation.",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Specific_Phobia,_Social_anxiety_disorder",
+      "question": "The best management approach for social anxiety disorder often includes:",
+      "options": [
+        "CBT and SSRIs",
+        "Isolation",
+        "Antipsychotics only",
+        "Electroconvulsive therapy"
+      ],
+      "answerKey": "A",
+      "answerText": "CBT and SSRIs",
+      "explanation": "A combination of Cognitive Behavioral Therapy (to target cognitive biases regarding social judgment) and SSRIs (to stabilize serotonergic signaling) provides the most robust clinical response.\n\n---\n\n## 12. Sexual Deviations",
+      "tags": [
+        "specific_phobia_social_anxiety_disorder"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Sexual_deviations",
+      "question": "Which term describes the condition of a person who becomes sexually aroused by dressing in clothes typically worn by the opposite sex?",
+      "options": [
+        "Transvestism",
+        "Fetishism",
+        "Sadism",
+        "Voyeurism"
+      ],
+      "answerKey": "A",
+      "answerText": "Transvestism",
+      "explanation": "Transvestic Disorder (under paraphilic disorders) involves recurrent, intense sexual arousal from cross-dressing, causing clinically significant distress or functional impairment.",
+      "tags": [
+        "sexual_deviations"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Sexual_deviations",
+      "question": "Which phase of the human sexual response cycle is characterized by rhythmic contractions at the base of the penis resulting in ejaculation for men?",
+      "options": [
+        "Excitement",
+        "Plateau",
+        "Orgasm",
+        "Resolution"
+      ],
+      "answerKey": "C",
+      "answerText": "Orgasm",
+      "explanation": "The orgasmic phase is defined by involuntary, rhythmic pelvic muscle contractions, accompanied in males by emission and ejaculation, alongside a high subjective sense of pleasure.",
+      "tags": [
+        "sexual_deviations"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Sexual_deviations",
+      "question": "Which of the following is one of the pharmacological treatment in premature ejaculation?",
+      "options": [
+        "Concor",
+        "Systematic desensitization",
+        "SSRIs",
+        "Alprostadil"
+      ],
+      "answerKey": "C",
+      "answerText": "SSRIs",
+      "explanation": "SSRIs delay ejaculation as a side effect (mediated by 5-HT receptors). This effect is utilized clinically to treat premature ejaculation.",
+      "tags": [
+        "sexual_deviations"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Sexual_deviations",
+      "question": "What category represents the most common cause of erectile dysfunction in young and middle-aged men?",
+      "options": [
+        "Endocrine factors (such as Diabetes Mellitus)",
+        "Psychological factors (such as performance anxiety and stress)",
+        "Vascular factors (such as atherosclerosis)",
+        "Iatrogenic drug side effects"
+      ],
+      "answerKey": "B",
+      "answerText": "Psychological factors (such as performance anxiety and stress)",
+      "explanation": "While older men typically have organic vascular/endocrine causes, younger and middle-aged men most commonly present with psychogenic erectile dysfunction, driven by performance anxiety, relationship distress, or stress.",
+      "tags": [
+        "sexual_deviations"
+      ]
+    },
+    {
+      "lesson": "Psychiatry_MCQs_2026::Sexual_deviations",
+      "question": "According to epidemiological data, what is the most common sexual disorder in men?",
+      "options": [
+        "Sadism",
+        "Male Hypoactive Sexual Desire Disorder",
+        "Erectile Disorder",
+        "Priapism"
+      ],
+      "answerKey": "C",
+      "answerText": "Erectile Disorder",
+      "explanation": "Erectile Disorder (ED) is one of the most highly prevalent and reported male",
+      "tags": [
+        "sexual_deviations"
+      ]
+    }
+  ]
+}
